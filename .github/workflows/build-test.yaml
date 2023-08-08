@@ -1,0 +1,80 @@
+name: Build and Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+env:
+  LCOV_BADGE_VER: v0.2.0
+jobs:
+  general-mq-sdk:
+    name: Build and test general-mq and sdk
+    permissions:
+      contents: write
+    runs-on: ubuntu-20.04
+    services:
+      rabbitmq:
+        image: rabbitmq:3.12.2-management-alpine
+        ports:
+          - 5671:5671
+          - 5672:5672
+          - 15672:15672
+      emqx:
+        image: emqx/emqx:5.1.4
+        ports:
+          - 1883:1883
+          - 8883:8883
+          - 18083:18083
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "stable"
+      - name: Install tools
+        run: |
+          go install github.com/jandelgado/gcov2lcov@latest
+          sudo apt -y install lcov
+          curl -kLO https://github.com/romainreignier/lcov_badge_generator/releases/download/$LCOV_BADGE_VER/lcov_badge_generator
+          chmod +x lcov_badge_generator
+          curl -LO https://github.com/woofdogtw/sylvia-iot-core/releases/latest/download/sylvia-iot-core.tar.xz
+          tar xf sylvia-iot-core.tar.xz
+      - name: Run sylvia-iot-core with the specified config file
+        run: |
+          sqlite3 test.db < $(pwd)/.github/workflows/files/test.db.sql
+          ./sylvia-iot-core -f $(pwd)/.github/workflows/files/config.json5 > /dev/null &
+      - name: Run test - general-mq
+        uses: nick-fields/retry@v2.8.3
+        env:
+          PROJ: "general-mq"
+        with:
+          timeout_minutes: 60
+          max_attempts: 5
+          command: >
+            go test -tags= -v -cover -covermode=count -coverpkg ./$PROJ -coverprofile ./$PROJ.out ./$PROJ/tests
+      - name: Run test - sdk
+        uses: nick-fields/retry@v2.8.3
+        env:
+          PROJ: "sdk"
+        with:
+          timeout_minutes: 60
+          max_attempts: 5
+          command: >
+            go test -tags= -v -cover -covermode=count -coverpkg ./$PROJ/api,./$PROJ/constants,./$PROJ/mq,./$PROJ/middlewares -coverprofile ./$PROJ.out ./$PROJ/tests
+      - name: Collect coverage
+        run: |
+          gcov2lcov -infile=./general-mq.out -outfile=./general-mq.lcov
+          genhtml ./general-mq.lcov -o ./coverage/general-mq
+          ./lcov_badge_generator -o ./coverage/general-mq/badge.svg ./coverage/general-mq/index.html
+          gcov2lcov -infile=./sdk.out -outfile=./sdk.lcov
+          genhtml ./sdk.lcov -o ./coverage/sdk
+          ./lcov_badge_generator -o ./coverage/sdk/badge.svg ./coverage/sdk/index.html
+      - name: Publish coverage
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+          folder: ./coverage
+          target-folder: docs/coverage
