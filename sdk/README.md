@@ -5,6 +5,8 @@
 [![Coverage](https://raw.githubusercontent.com/woofdogtw/sylvia-iot-go/gh-pages/docs/coverage/sdk/badge.svg)](https://woofdogtw.github.io/sylvia-iot-go/coverage/sdk/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+> This is the Go implementation (the original project is [**here**](https://github.com/woofdogtw/sylvia-iot-core/tree/main/sylvia-iot-sdk)).
+
 SDK for developing networks (adapters) and applications on Sylvia-IoT. The SDK contains:
 
 - `api`: utilities for accessing Sylvia-IoT **coremgr** APIs.

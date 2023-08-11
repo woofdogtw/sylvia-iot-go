@@ -1,11 +1,6 @@
 {
-    "log": {
-        "level": "info",    // none, debug, [info], warn, error
-        "style": "log4j",   // [json], log4j
-    },
-    "server": {
-        "httpPort": 1080,
-    },
+    "log": {},
+    "server": {},
     "auth": {
         "db": {
             "sqlite": {
@@ -24,17 +19,6 @@
     "coremgr": {
         "auth": "http://localhost:1080/auth",
         "broker": "http://localhost:1080/broker",
-        "mq": {
-            "engine": {                             // support engines
-                "amqp": "rabbitmq",                 // [rabbitmq]
-                "mqtt": "emqx",                     // [emqx], rumqttd
-            },
-            "rumqttd": {
-                "mqttPort": 1883,
-                "mqttsPort": 8883,
-                "consolePort": 18083,
-            },
-        },
     },
     "data": {
         "auth": "http://localhost:1080/auth",

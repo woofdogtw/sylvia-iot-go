@@ -168,6 +168,9 @@ func (q *AmqpQueue) SendMsg(payload []byte) error {
 		routingKey = q.opts.Name
 	}
 	msg := amqp.Publishing{Body: payload}
+	if q.opts.Reliable {
+		msg.DeliveryMode = 2
+	}
 	ctx := context.Background()
 	return channel.PublishWithContext(ctx, exchange, routingKey, q.opts.Reliable, false, msg)
 }
