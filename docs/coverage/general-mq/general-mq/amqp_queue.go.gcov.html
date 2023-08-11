@@ -31,13 +31,13 @@
             <td class="headerValue">general-mq.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">200</td>
-            <td class="headerCovTableEntry">254</td>
-            <td class="headerCovTableEntryMed">78.7 %</td>
+            <td class="headerCovTableEntry">203</td>
+            <td class="headerCovTableEntry">257</td>
+            <td class="headerCovTableEntryMed">79.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-08 16:29:59</td>
+            <td class="headerValue">2023-08-11 13:54:06</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -154,9 +154,9 @@
 <a name="92"><span class="lineNum">      92 </span><span class="lineCov">          2 :         return q.opts.IsRecv</span></a>
 <a name="93"><span class="lineNum">      93 </span><span class="lineCov">          2 : }</span></a>
 <a name="94"><span class="lineNum">      94 </span>            : </a>
-<a name="95"><span class="lineNum">      95 </span><span class="lineCov">       1323 : func (q *AmqpQueue) Status() Status {</span></a>
-<a name="96"><span class="lineNum">      96 </span><span class="lineCov">       1323 :         return q.status</span></a>
-<a name="97"><span class="lineNum">      97 </span><span class="lineCov">       1323 : }</span></a>
+<a name="95"><span class="lineNum">      95 </span><span class="lineCov">       1316 : func (q *AmqpQueue) Status() Status {</span></a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">       1316 :         return q.status</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">       1316 : }</span></a>
 <a name="98"><span class="lineNum">      98 </span>            : </a>
 <a name="99"><span class="lineNum">      99 </span><span class="lineCov">         16 : func (q *AmqpQueue) SetHandler(handler QueueHandler) {</span></a>
 <a name="100"><span class="lineNum">     100 </span><span class="lineCov">         16 :         q.handler = handler</span></a>
@@ -230,216 +230,219 @@
 <a name="168"><span class="lineNum">     168 </span><span class="lineCov">         13 :                 routingKey = q.opts.Name</span></a>
 <a name="169"><span class="lineNum">     169 </span><span class="lineCov">         13 :         }</span></a>
 <a name="170"><span class="lineNum">     170 </span><span class="lineCov">         17 :         msg := amqp.Publishing{Body: payload}</span></a>
-<a name="171"><span class="lineNum">     171 </span><span class="lineCov">         17 :         ctx := context.Background()</span></a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineCov">         17 :         return channel.PublishWithContext(ctx, exchange, routingKey, q.opts.Reliable, false, msg)</span></a>
-<a name="173"><span class="lineNum">     173 </span>            : }</a>
-<a name="174"><span class="lineNum">     174 </span>            : </a>
-<a name="175"><span class="lineNum">     175 </span>            : // To get the associated connection status.</a>
-<a name="176"><span class="lineNum">     176 </span><span class="lineCov">         53 : func (q *AmqpQueue) connStatus() Status {</span></a>
-<a name="177"><span class="lineNum">     177 </span><span class="lineCov">         53 :         return q.conn.status</span></a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineCov">         53 : }</span></a>
-<a name="179"><span class="lineNum">     179 </span>            : </a>
-<a name="180"><span class="lineNum">     180 </span>            : // The error handling.</a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          1 : func (q *AmqpQueue) onError(err error) {</span></a>
-<a name="182"><span class="lineNum">     182 </span><span class="lineCov">          1 :         handler := q.handler</span></a>
-<a name="183"><span class="lineNum">     183 </span><span class="lineCov">          1 :         if handler != nil {</span></a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :                 go func() {</span></a>
-<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :                         handler.OnError(q, err)</span></a>
-<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :                 }()</span></a>
-<a name="187"><span class="lineNum">     187 </span>            :         }</a>
-<a name="188"><span class="lineNum">     188 </span>            : }</a>
-<a name="189"><span class="lineNum">     189 </span>            : </a>
-<a name="190"><span class="lineNum">     190 </span>            : // Set message consumer.</a>
-<a name="191"><span class="lineNum">     191 </span><span class="lineCov">         19 : func (q *AmqpQueue) setConsumer(deliveryChannel &lt;-chan amqp.Delivery) {</span></a>
-<a name="192"><span class="lineNum">     192 </span><span class="lineCov">         38 :         go func() {</span></a>
-<a name="193"><span class="lineNum">     193 </span><span class="lineCov">         65 :                 for delivery := range deliveryChannel {</span></a>
-<a name="194"><span class="lineNum">     194 </span><span class="lineCov">         46 :                         channel := q.channel</span></a>
-<a name="195"><span class="lineNum">     195 </span><span class="lineCov">         46 :                         if channel == nil {</span></a>
-<a name="196"><span class="lineNum">     196 </span><span class="lineNoCov">          0 :                                 return</span></a>
-<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :                         }</span></a>
-<a name="198"><span class="lineNum">     198 </span>            : </a>
-<a name="199"><span class="lineNum">     199 </span><span class="lineCov">         46 :                         handler := q.handler</span></a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineCov">         92 :                         if handler != nil {</span></a>
-<a name="201"><span class="lineNum">     201 </span><span class="lineCov">         46 :                                 msg := &amp;amqpMessage{</span></a>
-<a name="202"><span class="lineNum">     202 </span><span class="lineCov">         46 :                                         channel:  channel,</span></a>
-<a name="203"><span class="lineNum">     203 </span><span class="lineCov">         46 :                                         delivery: delivery.DeliveryTag,</span></a>
-<a name="204"><span class="lineNum">     204 </span><span class="lineCov">         46 :                                         content:  delivery.Body,</span></a>
-<a name="205"><span class="lineNum">     205 </span><span class="lineCov">         46 :                                 }</span></a>
-<a name="206"><span class="lineNum">     206 </span><span class="lineCov">         92 :                                 go func() {</span></a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineCov">         46 :                                         handler.OnMessage(q, msg)</span></a>
-<a name="208"><span class="lineNum">     208 </span><span class="lineCov">         46 :                                 }()</span></a>
-<a name="209"><span class="lineNum">     209 </span>            :                         }</a>
-<a name="210"><span class="lineNum">     210 </span>            :                 }</a>
-<a name="211"><span class="lineNum">     211 </span>            :         }()</a>
-<a name="212"><span class="lineNum">     212 </span>            : }</a>
-<a name="213"><span class="lineNum">     213 </span>            : </a>
-<a name="214"><span class="lineNum">     214 </span><span class="lineCov">         46 : func (m *amqpMessage) Payload() []byte {</span></a>
-<a name="215"><span class="lineNum">     215 </span><span class="lineCov">         46 :         return m.content</span></a>
-<a name="216"><span class="lineNum">     216 </span><span class="lineCov">         46 : }</span></a>
-<a name="217"><span class="lineNum">     217 </span>            : </a>
-<a name="218"><span class="lineNum">     218 </span><span class="lineCov">         21 : func (m *amqpMessage) Ack() error {</span></a>
-<a name="219"><span class="lineNum">     219 </span><span class="lineCov">         21 :         return m.channel.Ack(m.delivery, false)</span></a>
-<a name="220"><span class="lineNum">     220 </span><span class="lineCov">         21 : }</span></a>
-<a name="221"><span class="lineNum">     221 </span>            : </a>
-<a name="222"><span class="lineNum">     222 </span><span class="lineCov">         25 : func (m *amqpMessage) Nack() error {</span></a>
-<a name="223"><span class="lineNum">     223 </span><span class="lineCov">         25 :         return m.channel.Nack(m.delivery, false, true)</span></a>
-<a name="224"><span class="lineNum">     224 </span><span class="lineCov">         25 : }</span></a>
-<a name="225"><span class="lineNum">     225 </span>            : </a>
-<a name="226"><span class="lineNum">     226 </span><span class="lineCov">         27 : func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {</span></a>
-<a name="227"><span class="lineNum">     227 </span><span class="lineCov">         27 :         ch := make(chan Status, 1)</span></a>
-<a name="228"><span class="lineNum">     228 </span><span class="lineCov">         27 : </span></a>
-<a name="229"><span class="lineNum">     229 </span><span class="lineCov">         54 :         go func() {</span></a>
-<a name="230"><span class="lineNum">     230 </span><span class="lineCov">         27 :                 var queueChannnel chan *amqp.Error</span></a>
-<a name="231"><span class="lineNum">     231 </span><span class="lineCov">        106 :                 for {</span></a>
-<a name="232"><span class="lineNum">     232 </span><span class="lineCov">         79 :                         switch &lt;-ch {</span></a>
-<a name="233"><span class="lineNum">     233 </span><span class="lineNoCov">          0 :                         case Closed, Closing:</span></a>
-<a name="234"><span class="lineNum">     234 </span><span class="lineNoCov">          0 :                                 return</span></a>
-<a name="235"><span class="lineNum">     235 </span><span class="lineCov">         53 :                         case Connecting:</span></a>
-<a name="236"><span class="lineNum">     236 </span><span class="lineCov">         79 :                                 if q.connStatus() != Connected {</span></a>
-<a name="237"><span class="lineNum">     237 </span><span class="lineCov">         26 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="238"><span class="lineNum">     238 </span><span class="lineCov">         26 :                                         ch &lt;- Connecting</span></a>
-<a name="239"><span class="lineNum">     239 </span><span class="lineCov">         26 :                                         continue</span></a>
-<a name="240"><span class="lineNum">     240 </span>            :                                 }</a>
-<a name="241"><span class="lineNum">     241 </span>            : </a>
-<a name="242"><span class="lineNum">     242 </span><span class="lineCov">         27 :                                 rawConn := q.conn.getRawConnection()</span></a>
-<a name="243"><span class="lineNum">     243 </span><span class="lineCov">         27 :                                 if rawConn == nil {</span></a>
-<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :                                         ch &lt;- Connecting</span></a>
-<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :                                         continue</span></a>
-<a name="247"><span class="lineNum">     247 </span>            :                                 }</a>
-<a name="248"><span class="lineNum">     248 </span><span class="lineCov">         27 :                                 channel, err := rawConn.Channel()</span></a>
-<a name="249"><span class="lineNum">     249 </span><span class="lineCov">         27 :                                 if err != nil {</span></a>
-<a name="250"><span class="lineNum">     250 </span><span class="lineNoCov">          0 :                                         q.onError(err)</span></a>
-<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="252"><span class="lineNum">     252 </span><span class="lineNoCov">          0 :                                         ch &lt;- Connecting</span></a>
-<a name="253"><span class="lineNum">     253 </span><span class="lineNoCov">          0 :                                         continue</span></a>
-<a name="254"><span class="lineNum">     254 </span>            :                                 }</a>
-<a name="255"><span class="lineNum">     255 </span><span class="lineCov">         32 :                                 if q.opts.Reliable {</span></a>
-<a name="256"><span class="lineNum">     256 </span><span class="lineCov">          5 :                                         if err := channel.Confirm(false); err != nil {</span></a>
-<a name="257"><span class="lineNum">     257 </span><span class="lineNoCov">          0 :                                                 q.onError(err)</span></a>
-<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 :                                                 ch &lt;- Connecting</span></a>
-<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :                                                 continue</span></a>
-<a name="261"><span class="lineNum">     261 </span>            :                                         }</a>
-<a name="262"><span class="lineNum">     262 </span>            :                                 }</a>
-<a name="263"><span class="lineNum">     263 </span>            : </a>
-<a name="264"><span class="lineNum">     264 </span><span class="lineCov">         27 :                                 name := q.opts.Name</span></a>
-<a name="265"><span class="lineNum">     265 </span><span class="lineCov">         33 :                                 if q.opts.Broadcast {</span></a>
-<a name="266"><span class="lineNum">     266 </span><span class="lineCov">          6 :                                         err := channel.ExchangeDeclare(name, amqp.ExchangeFanout, false, false, false,</span></a>
-<a name="267"><span class="lineNum">     267 </span><span class="lineCov">          6 :                                                 false, nil)</span></a>
-<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          6 :                                         if err != nil {</span></a>
-<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :                                                 q.onError(err)</span></a>
-<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="271"><span class="lineNum">     271 </span><span class="lineNoCov">          0 :                                                 ch &lt;- Connecting</span></a>
-<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :                                                 continue</span></a>
-<a name="273"><span class="lineNum">     273 </span>            :                                         }</a>
-<a name="274"><span class="lineNum">     274 </span>            : </a>
-<a name="275"><span class="lineNum">     275 </span><span class="lineCov">         10 :                                         if q.opts.IsRecv {</span></a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineCov">          4 :                                                 queue, err := channel.QueueDeclare(&quot;&quot;, false, false, true, false, nil)</span></a>
-<a name="277"><span class="lineNum">     277 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
-<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="282"><span class="lineNum">     282 </span>            :                                                 }</a>
-<a name="283"><span class="lineNum">     283 </span><span class="lineCov">          4 :                                                 err = channel.QueueBind(queue.Name, &quot;&quot;, name, false, nil)</span></a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="289"><span class="lineNum">     289 </span>            :                                                 }</a>
-<a name="290"><span class="lineNum">     290 </span><span class="lineCov">          4 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></a>
-<a name="291"><span class="lineNum">     291 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
-<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="296"><span class="lineNum">     296 </span>            :                                                 }</a>
-<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          4 :                                                 deliveryChannel, err :=</span></a>
-<a name="298"><span class="lineNum">     298 </span><span class="lineCov">          4 :                                                         channel.Consume(queue.Name, &quot;&quot;, false, false, false, false, nil)</span></a>
-<a name="299"><span class="lineNum">     299 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
-<a name="300"><span class="lineNum">     300 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="304"><span class="lineNum">     304 </span>            :                                                 }</a>
-<a name="305"><span class="lineNum">     305 </span><span class="lineCov">          4 :                                                 q.setConsumer(deliveryChannel)</span></a>
-<a name="306"><span class="lineNum">     306 </span>            :                                         }</a>
-<a name="307"><span class="lineNum">     307 </span><span class="lineCov">         21 :                                 } else {</span></a>
-<a name="308"><span class="lineNum">     308 </span><span class="lineCov">         21 :                                         _, err = channel.QueueDeclare(name, true, false, false, false, nil)</span></a>
-<a name="309"><span class="lineNum">     309 </span><span class="lineCov">         22 :                                         if err != nil {</span></a>
-<a name="310"><span class="lineNum">     310 </span><span class="lineCov">          1 :                                                 q.onError(err)</span></a>
-<a name="311"><span class="lineNum">     311 </span><span class="lineCov">          1 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          1 :                                                 ch &lt;- Connecting</span></a>
-<a name="313"><span class="lineNum">     313 </span><span class="lineCov">          1 :                                                 continue</span></a>
-<a name="314"><span class="lineNum">     314 </span>            :                                         }</a>
-<a name="315"><span class="lineNum">     315 </span>            : </a>
-<a name="316"><span class="lineNum">     316 </span><span class="lineCov">         35 :                                         if q.opts.IsRecv {</span></a>
-<a name="317"><span class="lineNum">     317 </span><span class="lineCov">         15 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></a>
-<a name="318"><span class="lineNum">     318 </span><span class="lineCov">         15 :                                                 if err != nil {</span></a>
-<a name="319"><span class="lineNum">     319 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="320"><span class="lineNum">     320 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="321"><span class="lineNum">     321 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="322"><span class="lineNum">     322 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="323"><span class="lineNum">     323 </span>            :                                                 }</a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineCov">         15 :                                                 deliveryChannel, err :=</span></a>
-<a name="325"><span class="lineNum">     325 </span><span class="lineCov">         15 :                                                         channel.Consume(name, &quot;&quot;, false, false, false, false, nil)</span></a>
-<a name="326"><span class="lineNum">     326 </span><span class="lineCov">         15 :                                                 if err != nil {</span></a>
-<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
-<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
-<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
-<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
-<a name="331"><span class="lineNum">     331 </span>            :                                                 }</a>
-<a name="332"><span class="lineNum">     332 </span><span class="lineCov">         15 :                                                 q.setConsumer(deliveryChannel)</span></a>
-<a name="333"><span class="lineNum">     333 </span>            :                                         }</a>
-<a name="334"><span class="lineNum">     334 </span>            :                                 }</a>
-<a name="335"><span class="lineNum">     335 </span>            : </a>
-<a name="336"><span class="lineNum">     336 </span><span class="lineCov">         26 :                                 q.statusMutex.Lock()</span></a>
-<a name="337"><span class="lineNum">     337 </span><span class="lineCov">         26 :                                 if q.status == Closed || q.status == Closing {</span></a>
-<a name="338"><span class="lineNum">     338 </span><span class="lineNoCov">          0 :                                         q.statusMutex.Unlock()</span></a>
-<a name="339"><span class="lineNum">     339 </span><span class="lineNoCov">          0 :                                         return</span></a>
-<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 :                                 }</span></a>
-<a name="341"><span class="lineNum">     341 </span>            : </a>
-<a name="342"><span class="lineNum">     342 </span><span class="lineCov">         26 :                                 q.channel = channel</span></a>
-<a name="343"><span class="lineNum">     343 </span><span class="lineCov">         26 :                                 q.status = Connected</span></a>
-<a name="344"><span class="lineNum">     344 </span><span class="lineCov">         26 :                                 q.statusMutex.Unlock()</span></a>
-<a name="345"><span class="lineNum">     345 </span><span class="lineCov">         26 : </span></a>
-<a name="346"><span class="lineNum">     346 </span><span class="lineCov">         26 :                                 queueChannnel = channel.NotifyClose(make(chan *amqp.Error, 1))</span></a>
-<a name="347"><span class="lineNum">     347 </span><span class="lineCov">         26 : </span></a>
-<a name="348"><span class="lineNum">     348 </span><span class="lineCov">         26 :                                 handler := q.handler</span></a>
-<a name="349"><span class="lineNum">     349 </span><span class="lineCov">         44 :                                 if handler != nil {</span></a>
-<a name="350"><span class="lineNum">     350 </span><span class="lineCov">         18 :                                         handler.OnStatus(q, Connected)</span></a>
-<a name="351"><span class="lineNum">     351 </span><span class="lineCov">         18 :                                 }</span></a>
-<a name="352"><span class="lineNum">     352 </span><span class="lineCov">         26 :                                 ch &lt;- Connected</span></a>
-<a name="353"><span class="lineNum">     353 </span><span class="lineCov">         26 :                         case Connected:</span></a>
-<a name="354"><span class="lineNum">     354 </span><span class="lineCov">         26 :                                 &lt;-queueChannnel</span></a>
-<a name="355"><span class="lineNum">     355 </span><span class="lineCov">         26 :                                 var channel *amqp.Channel</span></a>
-<a name="356"><span class="lineNum">     356 </span><span class="lineCov">         26 :                                 q.statusMutex.Lock()</span></a>
-<a name="357"><span class="lineNum">     357 </span><span class="lineCov">         26 :                                 q.status = Connecting</span></a>
-<a name="358"><span class="lineNum">     358 </span><span class="lineCov">         26 :                                 channel = q.channel</span></a>
-<a name="359"><span class="lineNum">     359 </span><span class="lineCov">         26 :                                 q.channel = nil</span></a>
-<a name="360"><span class="lineNum">     360 </span><span class="lineCov">         26 :                                 q.statusMutex.Unlock()</span></a>
-<a name="361"><span class="lineNum">     361 </span><span class="lineCov">         26 : </span></a>
-<a name="362"><span class="lineNum">     362 </span><span class="lineCov">         26 :                                 handler := q.handler</span></a>
-<a name="363"><span class="lineNum">     363 </span><span class="lineCov">         44 :                                 if handler != nil {</span></a>
-<a name="364"><span class="lineNum">     364 </span><span class="lineCov">         18 :                                         handler.OnStatus(q, Connecting)</span></a>
-<a name="365"><span class="lineNum">     365 </span><span class="lineCov">         18 :                                 }</span></a>
-<a name="366"><span class="lineNum">     366 </span><span class="lineCov">         27 :                                 if channel != nil {</span></a>
-<a name="367"><span class="lineNum">     367 </span><span class="lineCov">          1 :                                         _ = channel.Close()</span></a>
-<a name="368"><span class="lineNum">     368 </span><span class="lineCov">          1 :                                 }</span></a>
-<a name="369"><span class="lineNum">     369 </span><span class="lineCov">         26 :                                 ch &lt;- Connecting</span></a>
-<a name="370"><span class="lineNum">     370 </span><span class="lineNoCov">          0 :                         case Disconnected:</span></a>
-<a name="371"><span class="lineNum">     371 </span><span class="lineNoCov">          0 :                                 q.statusMutex.Lock()</span></a>
-<a name="372"><span class="lineNum">     372 </span><span class="lineNoCov">          0 :                                 q.status = Connecting</span></a>
-<a name="373"><span class="lineNum">     373 </span><span class="lineNoCov">          0 :                                 q.statusMutex.Unlock()</span></a>
-<a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 :                                 ch &lt;- Connecting</span></a>
-<a name="375"><span class="lineNum">     375 </span>            :                         }</a>
-<a name="376"><span class="lineNum">     376 </span>            :                 }</a>
-<a name="377"><span class="lineNum">     377 </span>            :         }()</a>
-<a name="378"><span class="lineNum">     378 </span>            : </a>
-<a name="379"><span class="lineNum">     379 </span><span class="lineCov">         27 :         return ch</span></a>
-<a name="380"><span class="lineNum">     380 </span>            : }</a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">         20 :         if q.opts.Reliable {</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineCov">          3 :                 msg.DeliveryMode = 2</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">          3 :         }</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">         17 :         ctx := context.Background()</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineCov">         17 :         return channel.PublishWithContext(ctx, exchange, routingKey, q.opts.Reliable, false, msg)</span></a>
+<a name="176"><span class="lineNum">     176 </span>            : }</a>
+<a name="177"><span class="lineNum">     177 </span>            : </a>
+<a name="178"><span class="lineNum">     178 </span>            : // To get the associated connection status.</a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">         53 : func (q *AmqpQueue) connStatus() Status {</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineCov">         53 :         return q.conn.status</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">         53 : }</span></a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            : // The error handling.</a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          1 : func (q *AmqpQueue) onError(err error) {</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">          1 :         handler := q.handler</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineCov">          1 :         if handler != nil {</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :                 go func() {</span></a>
+<a name="188"><span class="lineNum">     188 </span><span class="lineNoCov">          0 :                         handler.OnError(q, err)</span></a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :                 }()</span></a>
+<a name="190"><span class="lineNum">     190 </span>            :         }</a>
+<a name="191"><span class="lineNum">     191 </span>            : }</a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            : // Set message consumer.</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">         19 : func (q *AmqpQueue) setConsumer(deliveryChannel &lt;-chan amqp.Delivery) {</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">         38 :         go func() {</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineCov">         41 :                 for delivery := range deliveryChannel {</span></a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineCov">         22 :                         channel := q.channel</span></a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">         22 :                         if channel == nil {</span></a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :                                 return</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :                         }</span></a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineCov">         22 :                         handler := q.handler</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">         44 :                         if handler != nil {</span></a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">         22 :                                 msg := &amp;amqpMessage{</span></a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">         22 :                                         channel:  channel,</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">         22 :                                         delivery: delivery.DeliveryTag,</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">         22 :                                         content:  delivery.Body,</span></a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">         22 :                                 }</span></a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">         44 :                                 go func() {</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">         22 :                                         handler.OnMessage(q, msg)</span></a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">         22 :                                 }()</span></a>
+<a name="212"><span class="lineNum">     212 </span>            :                         }</a>
+<a name="213"><span class="lineNum">     213 </span>            :                 }</a>
+<a name="214"><span class="lineNum">     214 </span>            :         }()</a>
+<a name="215"><span class="lineNum">     215 </span>            : }</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">         22 : func (m *amqpMessage) Payload() []byte {</span></a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineCov">         22 :         return m.content</span></a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineCov">         22 : }</span></a>
+<a name="220"><span class="lineNum">     220 </span>            : </a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">         21 : func (m *amqpMessage) Ack() error {</span></a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov">         21 :         return m.channel.Ack(m.delivery, false)</span></a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineCov">         21 : }</span></a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">          1 : func (m *amqpMessage) Nack() error {</span></a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineCov">          1 :         return m.channel.Nack(m.delivery, false, true)</span></a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">          1 : }</span></a>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">         27 : func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {</span></a>
+<a name="230"><span class="lineNum">     230 </span><span class="lineCov">         27 :         ch := make(chan Status, 1)</span></a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">         27 : </span></a>
+<a name="232"><span class="lineNum">     232 </span><span class="lineCov">         54 :         go func() {</span></a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineCov">         27 :                 var queueChannnel chan *amqp.Error</span></a>
+<a name="234"><span class="lineNum">     234 </span><span class="lineCov">        106 :                 for {</span></a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">         79 :                         switch &lt;-ch {</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :                         case Closed, Closing:</span></a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :                                 return</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineCov">         53 :                         case Connecting:</span></a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">         79 :                                 if q.connStatus() != Connected {</span></a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineCov">         26 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineCov">         26 :                                         ch &lt;- Connecting</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineCov">         26 :                                         continue</span></a>
+<a name="243"><span class="lineNum">     243 </span>            :                                 }</a>
+<a name="244"><span class="lineNum">     244 </span>            : </a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">         27 :                                 rawConn := q.conn.getRawConnection()</span></a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineCov">         27 :                                 if rawConn == nil {</span></a>
+<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :                                         ch &lt;- Connecting</span></a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :                                         continue</span></a>
+<a name="250"><span class="lineNum">     250 </span>            :                                 }</a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineCov">         27 :                                 channel, err := rawConn.Channel()</span></a>
+<a name="252"><span class="lineNum">     252 </span><span class="lineCov">         27 :                                 if err != nil {</span></a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineNoCov">          0 :                                         q.onError(err)</span></a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 :                                         ch &lt;- Connecting</span></a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :                                         continue</span></a>
+<a name="257"><span class="lineNum">     257 </span>            :                                 }</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">         32 :                                 if q.opts.Reliable {</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">          5 :                                         if err := channel.Confirm(false); err != nil {</span></a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :                                                 q.onError(err)</span></a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :                                                 ch &lt;- Connecting</span></a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :                                                 continue</span></a>
+<a name="264"><span class="lineNum">     264 </span>            :                                         }</a>
+<a name="265"><span class="lineNum">     265 </span>            :                                 }</a>
+<a name="266"><span class="lineNum">     266 </span>            : </a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineCov">         27 :                                 name := q.opts.Name</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">         33 :                                 if q.opts.Broadcast {</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">          6 :                                         err := channel.ExchangeDeclare(name, amqp.ExchangeFanout, false, false, false,</span></a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineCov">          6 :                                                 false, nil)</span></a>
+<a name="271"><span class="lineNum">     271 </span><span class="lineCov">          6 :                                         if err != nil {</span></a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :                                                 q.onError(err)</span></a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :                                                 ch &lt;- Connecting</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :                                                 continue</span></a>
+<a name="276"><span class="lineNum">     276 </span>            :                                         }</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">         10 :                                         if q.opts.IsRecv {</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineCov">          4 :                                                 queue, err := channel.QueueDeclare(&quot;&quot;, false, false, true, false, nil)</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="285"><span class="lineNum">     285 </span>            :                                                 }</a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineCov">          4 :                                                 err = channel.QueueBind(queue.Name, &quot;&quot;, name, false, nil)</span></a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="292"><span class="lineNum">     292 </span>            :                                                 }</a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineCov">          4 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
+<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="299"><span class="lineNum">     299 </span>            :                                                 }</a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineCov">          4 :                                                 deliveryChannel, err :=</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">          4 :                                                         channel.Consume(queue.Name, &quot;&quot;, false, false, false, false, nil)</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineCov">          4 :                                                 if err != nil {</span></a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="307"><span class="lineNum">     307 </span>            :                                                 }</a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineCov">          4 :                                                 q.setConsumer(deliveryChannel)</span></a>
+<a name="309"><span class="lineNum">     309 </span>            :                                         }</a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineCov">         21 :                                 } else {</span></a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineCov">         21 :                                         _, err = channel.QueueDeclare(name, true, false, false, false, nil)</span></a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineCov">         22 :                                         if err != nil {</span></a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineCov">          1 :                                                 q.onError(err)</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineCov">          1 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">          1 :                                                 ch &lt;- Connecting</span></a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineCov">          1 :                                                 continue</span></a>
+<a name="317"><span class="lineNum">     317 </span>            :                                         }</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span><span class="lineCov">         35 :                                         if q.opts.IsRecv {</span></a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineCov">         15 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></a>
+<a name="321"><span class="lineNum">     321 </span><span class="lineCov">         15 :                                                 if err != nil {</span></a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="323"><span class="lineNum">     323 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="326"><span class="lineNum">     326 </span>            :                                                 }</a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineCov">         15 :                                                 deliveryChannel, err :=</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">         15 :                                                         channel.Consume(name, &quot;&quot;, false, false, false, false, nil)</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineCov">         15 :                                                 if err != nil {</span></a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :                                                         q.onError(err)</span></a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :                                                         ch &lt;- Connecting</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :                                                         continue</span></a>
+<a name="334"><span class="lineNum">     334 </span>            :                                                 }</a>
+<a name="335"><span class="lineNum">     335 </span><span class="lineCov">         15 :                                                 q.setConsumer(deliveryChannel)</span></a>
+<a name="336"><span class="lineNum">     336 </span>            :                                         }</a>
+<a name="337"><span class="lineNum">     337 </span>            :                                 }</a>
+<a name="338"><span class="lineNum">     338 </span>            : </a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineCov">         26 :                                 q.statusMutex.Lock()</span></a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineCov">         26 :                                 if q.status == Closed || q.status == Closing {</span></a>
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 :                                         q.statusMutex.Unlock()</span></a>
+<a name="342"><span class="lineNum">     342 </span><span class="lineNoCov">          0 :                                         return</span></a>
+<a name="343"><span class="lineNum">     343 </span><span class="lineNoCov">          0 :                                 }</span></a>
+<a name="344"><span class="lineNum">     344 </span>            : </a>
+<a name="345"><span class="lineNum">     345 </span><span class="lineCov">         26 :                                 q.channel = channel</span></a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineCov">         26 :                                 q.status = Connected</span></a>
+<a name="347"><span class="lineNum">     347 </span><span class="lineCov">         26 :                                 q.statusMutex.Unlock()</span></a>
+<a name="348"><span class="lineNum">     348 </span><span class="lineCov">         26 : </span></a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineCov">         26 :                                 queueChannnel = channel.NotifyClose(make(chan *amqp.Error, 1))</span></a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineCov">         26 : </span></a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineCov">         26 :                                 handler := q.handler</span></a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">         44 :                                 if handler != nil {</span></a>
+<a name="353"><span class="lineNum">     353 </span><span class="lineCov">         18 :                                         handler.OnStatus(q, Connected)</span></a>
+<a name="354"><span class="lineNum">     354 </span><span class="lineCov">         18 :                                 }</span></a>
+<a name="355"><span class="lineNum">     355 </span><span class="lineCov">         26 :                                 ch &lt;- Connected</span></a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">         26 :                         case Connected:</span></a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineCov">         26 :                                 &lt;-queueChannnel</span></a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">         26 :                                 var channel *amqp.Channel</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineCov">         26 :                                 q.statusMutex.Lock()</span></a>
+<a name="360"><span class="lineNum">     360 </span><span class="lineCov">         26 :                                 q.status = Connecting</span></a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineCov">         26 :                                 channel = q.channel</span></a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">         26 :                                 q.channel = nil</span></a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineCov">         26 :                                 q.statusMutex.Unlock()</span></a>
+<a name="364"><span class="lineNum">     364 </span><span class="lineCov">         26 : </span></a>
+<a name="365"><span class="lineNum">     365 </span><span class="lineCov">         26 :                                 handler := q.handler</span></a>
+<a name="366"><span class="lineNum">     366 </span><span class="lineCov">         44 :                                 if handler != nil {</span></a>
+<a name="367"><span class="lineNum">     367 </span><span class="lineCov">         18 :                                         handler.OnStatus(q, Connecting)</span></a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineCov">         18 :                                 }</span></a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineCov">         27 :                                 if channel != nil {</span></a>
+<a name="370"><span class="lineNum">     370 </span><span class="lineCov">          1 :                                         _ = channel.Close()</span></a>
+<a name="371"><span class="lineNum">     371 </span><span class="lineCov">          1 :                                 }</span></a>
+<a name="372"><span class="lineNum">     372 </span><span class="lineCov">         26 :                                 ch &lt;- Connecting</span></a>
+<a name="373"><span class="lineNum">     373 </span><span class="lineNoCov">          0 :                         case Disconnected:</span></a>
+<a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 :                                 q.statusMutex.Lock()</span></a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 :                                 q.status = Connecting</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 :                                 q.statusMutex.Unlock()</span></a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 :                                 ch &lt;- Connecting</span></a>
+<a name="378"><span class="lineNum">     378 </span>            :                         }</a>
+<a name="379"><span class="lineNum">     379 </span>            :                 }</a>
+<a name="380"><span class="lineNum">     380 </span>            :         }()</a>
+<a name="381"><span class="lineNum">     381 </span>            : </a>
+<a name="382"><span class="lineNum">     382 </span><span class="lineCov">         27 :         return ch</span></a>
+<a name="383"><span class="lineNum">     383 </span>            : }</a>
 </pre>
       </td>
     </tr>
