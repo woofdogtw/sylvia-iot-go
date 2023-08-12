@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-12 08:29:51</td>
+            <td class="headerValue">2023-08-12 15:20:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -249,9 +249,9 @@
 <a name="187"><span class="lineNum">     187 </span><span class="lineCov">          2 : }</span></a>
 <a name="188"><span class="lineNum">     188 </span>            : </a>
 <a name="189"><span class="lineNum">     189 </span>            : // Manager status.</a>
-<a name="190"><span class="lineNum">     190 </span><span class="lineCov">       1580 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></a>
-<a name="191"><span class="lineNum">     191 </span><span class="lineCov">       1580 :         return mgr.status</span></a>
-<a name="192"><span class="lineNum">     192 </span><span class="lineCov">       1580 : }</span></a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineCov">       1596 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineCov">       1596 :         return mgr.status</span></a>
+<a name="192"><span class="lineNum">     192 </span><span class="lineCov">       1596 : }</span></a>
 <a name="193"><span class="lineNum">     193 </span>            : </a>
 <a name="194"><span class="lineNum">     194 </span>            : // Detail status of each message queue. Please ignore `Ctrl`.</a>
 <a name="195"><span class="lineNum">     195 </span><span class="lineCov">          2 : func (mgr *ApplicationMgr) MqStatus() DataMqStatus {</span></a>
@@ -321,8 +321,8 @@
 <a name="259"><span class="lineNum">     259 </span><span class="lineCov">          2 :                         _ = message.Ack()</span></a>
 <a name="260"><span class="lineNum">     260 </span><span class="lineCov">          2 :                         return</span></a>
 <a name="261"><span class="lineNum">     261 </span><span class="lineCov">          2 :                 }</span></a>
-<a name="262"><span class="lineNum">     262 </span><span class="lineCov">         23 :                 if data.Data != &quot;&quot; {</span></a>
-<a name="263"><span class="lineNum">     263 </span><span class="lineCov">         12 :                         if _, err := hex.DecodeString(data.Data); err != nil {</span></a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineCov">         24 :                 if data.Data != &quot;&quot; {</span></a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineCov">         13 :                         if _, err := hex.DecodeString(data.Data); err != nil {</span></a>
 <a name="264"><span class="lineNum">     264 </span><span class="lineCov">          2 :                                 _ = message.Ack()</span></a>
 <a name="265"><span class="lineNum">     265 </span><span class="lineCov">          2 :                                 return</span></a>
 <a name="266"><span class="lineNum">     266 </span><span class="lineCov">          2 :                         }</span></a>
