@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-11 13:54:06</td>
+            <td class="headerValue">2023-08-12 08:29:51</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -126,13 +126,13 @@
 <a name="64"><span class="lineNum">      64 </span>            : )</a>
 <a name="65"><span class="lineNum">      65 </span>            : </a>
 <a name="66"><span class="lineNum">      66 </span>            : // To validate the queue name.</a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineCov">         59 : func nameValidate(name string) bool {</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineCov">         59 :         regexp, err := regexp2.Compile(queueNamePattern, regexp2.None)</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineCov">         59 :         if err != nil || regexp == nil {</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">         61 : func nameValidate(name string) bool {</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">         61 :         regexp, err := regexp2.Compile(queueNamePattern, regexp2.None)</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">         61 :         if err != nil || regexp == nil {</span></a>
 <a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 return false</span></a>
 <a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :         }</span></a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineCov">         59 :         match, _ := regexp.MatchString(name)</span></a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineCov">         59 :         return match</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">         61 :         match, _ := regexp.MatchString(name)</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">         61 :         return match</span></a>
 <a name="74"><span class="lineNum">      74 </span>            : }</a>
 </pre>
       </td>
