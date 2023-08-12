@@ -2,7 +2,7 @@ module github.com/woofdogtw/sylvia-iot-go/sdk
 
 go 1.20
 
-replace github.com/woofdogtw/sylvia-iot-go/general-mq v0.0.1 => ../general-mq
+replace github.com/woofdogtw/sylvia-iot-go/general-mq v0.0.4 => ../general-mq
 
 require (
 	github.com/gin-gonic/gin v1.9.1

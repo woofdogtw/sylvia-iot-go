@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.4 - 2023-08-12
+
+### Fixed
+
+- **sdk**: Fix the dependent version.
+
 ## 0.0.3 - 2023-08-12
 
 ### Changed
