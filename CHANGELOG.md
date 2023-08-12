@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.3 - 2023-08-12
+
+### Changed
+
+- Update dependencies.
+- **general-mq/sdk**: Provides `persistent` options for AMQP.
+
 ## 0.0.2 - 2023-08-11
 
 ### Changed

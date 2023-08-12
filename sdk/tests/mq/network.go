@@ -249,6 +249,7 @@ func netNewManual() {
 		ID:           "id_network",
 		Name:         "code_network",
 		Prefetch:     1,
+		Persistent:   true,
 		SharedPrefix: mqttSharedPrefix,
 	}
 	mgr, err = mq.NewNetworkMgr(connPool, *hostUri, opts, handler)

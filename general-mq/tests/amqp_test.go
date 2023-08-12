@@ -80,9 +80,10 @@ func amqpSuite() {
 		It("reliable", amqpScenarioDataReliable)
 		It("best effort", amqpScenarioDataBestEffort)
 
+		It("persistent", amqpScenarioDataPersistent)
 		It("nack", amqpScenarioDataNack)
 
-		caseCount := 8
+		caseCount := 9
 		clearDone := false
 		AfterEach(func() {
 			clearState()
