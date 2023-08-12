@@ -48,6 +48,8 @@ type AmqpQueueOptions struct {
 	//
 	// `Note`: this value MUST be a positive value.
 	Prefetch uint16
+	// Use persistent delivery mode.
+	Persistent bool
 }
 
 type amqpMessage struct {
@@ -168,7 +170,7 @@ func (q *AmqpQueue) SendMsg(payload []byte) error {
 		routingKey = q.opts.Name
 	}
 	msg := amqp.Publishing{Body: payload}
-	if q.opts.Reliable {
+	if q.opts.Persistent {
 		msg.DeliveryMode = 2
 	}
 	ctx := context.Background()

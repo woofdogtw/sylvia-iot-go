@@ -144,6 +144,7 @@ func appNewManual() {
 		ID:           "id_application",
 		Name:         "code_application",
 		Prefetch:     1,
+		Persistent:   true,
 		SharedPrefix: mqttSharedPrefix,
 	}
 	mgr, err := mq.NewApplicationMgr(connPool, *hostUri, opts, handler)

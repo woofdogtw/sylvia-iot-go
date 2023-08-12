@@ -56,6 +56,8 @@ type Options struct {
 	Name string `json:"name"`
 	// AMQP prefetch option.
 	Prefetch uint16 `json:"prefetch"`
+	// AMQP persistent option.
+	Persistent bool `json:"persistent"`
 	// MQTT shared queue prefix option.
 	SharedPrefix string `json:"sharedPrefix"`
 }
@@ -265,28 +267,32 @@ func newDataQueues(conn *counterConnection, opts Options, prefix string,
 		}
 
 		uldataOpts := gmq.AmqpQueueOptions{
-			Name:     fmt.Sprintf("%s.%s.%s.uldata", prefix, unit, opts.Name),
-			IsRecv:   !isNetwork,
-			Reliable: true,
-			Prefetch: prefetch,
+			Name:       fmt.Sprintf("%s.%s.%s.uldata", prefix, unit, opts.Name),
+			IsRecv:     !isNetwork,
+			Reliable:   true,
+			Persistent: opts.Persistent,
+			Prefetch:   prefetch,
 		}
 		dldataOpts := gmq.AmqpQueueOptions{
-			Name:     fmt.Sprintf("%s.%s.%s.dldata", prefix, unit, opts.Name),
-			IsRecv:   isNetwork,
-			Reliable: true,
-			Prefetch: prefetch,
+			Name:       fmt.Sprintf("%s.%s.%s.dldata", prefix, unit, opts.Name),
+			IsRecv:     isNetwork,
+			Reliable:   true,
+			Persistent: opts.Persistent,
+			Prefetch:   prefetch,
 		}
 		dldataRespOpts := gmq.AmqpQueueOptions{
-			Name:     fmt.Sprintf("%s.%s.%s.dldata-resp", prefix, unit, opts.Name),
-			IsRecv:   !isNetwork,
-			Reliable: true,
-			Prefetch: prefetch,
+			Name:       fmt.Sprintf("%s.%s.%s.dldata-resp", prefix, unit, opts.Name),
+			IsRecv:     !isNetwork,
+			Reliable:   true,
+			Persistent: opts.Persistent,
+			Prefetch:   prefetch,
 		}
 		dldataResultOpts := gmq.AmqpQueueOptions{
-			Name:     fmt.Sprintf("%s.%s.%s.dldata-result", prefix, unit, opts.Name),
-			IsRecv:   !isNetwork,
-			Reliable: true,
-			Prefetch: prefetch,
+			Name:       fmt.Sprintf("%s.%s.%s.dldata-result", prefix, unit, opts.Name),
+			IsRecv:     !isNetwork,
+			Reliable:   true,
+			Persistent: opts.Persistent,
+			Prefetch:   prefetch,
 		}
 		ctrlOpts := gmq.AmqpQueueOptions{
 			Name:     fmt.Sprintf("%s.%s.%s.ctrl", prefix, unit, opts.Name),

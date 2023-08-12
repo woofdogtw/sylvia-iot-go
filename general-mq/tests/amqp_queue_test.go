@@ -631,6 +631,66 @@ func amqpScenarioDataBestEffort() {
 	Expect(retry == 0).ShouldNot(BeTrue())
 }
 
+// Send persistent data by sending data to a closed queue then it will receive after connecting.
+func amqpScenarioDataPersistent() {
+	resources := amqpQueueResources{}
+
+	opts := gmq.AmqpQueueOptions{
+		Name:       "name",
+		Reliable:   true,
+		Persistent: true,
+	}
+	handlers, err := createAmqpMsgRsc(&resources, opts, 1)
+	Expect(err).ShouldNot(HaveOccurred())
+
+	for _, queue := range resources.queues {
+		waitQueueConnected(queue)
+	}
+
+	Expect(len(handlers) > 0).Should(BeTrue())
+	handler := handlers[0]
+
+	Expect(len(resources.queues) > 0).Should(BeTrue())
+	queue := resources.queues[0]
+	err = queue.SendMsg([]byte("1"))
+	Expect(err).ShouldNot(HaveOccurred())
+	retry := 150
+	for ; retry > 0; retry-- {
+		time.Sleep(10 * time.Millisecond)
+		recvLen := len(handler.recvMessages)
+		if recvLen == 1 {
+			msg, err := getMessage(handler.recvMessages, 0)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(msg).Should(Equal("1"))
+			break
+		}
+	}
+	Expect(retry == 0).ShouldNot(BeTrue())
+
+	Expect(len(resources.queues) >= 2).Should(BeTrue())
+	queue = resources.queues[1]
+	err = queue.Close()
+	Expect(err).ShouldNot(HaveOccurred())
+	queue = resources.queues[0]
+	err = queue.SendMsg([]byte("2"))
+	Expect(err).ShouldNot(HaveOccurred())
+	queue = resources.queues[1]
+	err = queue.Connect()
+	Expect(err).ShouldNot(HaveOccurred())
+	retry = 150
+	for ; retry > 0; retry-- {
+		time.Sleep(10 * time.Millisecond)
+		recvLen := len(handler.recvMessages)
+		if recvLen == 2 {
+			msg, err := getMessage(handler.recvMessages, 1)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(msg).Should(Equal("2"))
+			break
+		}
+	}
+	Expect(retry == 0).ShouldNot(BeTrue())
+}
+
 // Test NACK and then the queue will receive the data again.
 func amqpScenarioDataNack() {
 	resources := amqpQueueResources{}
