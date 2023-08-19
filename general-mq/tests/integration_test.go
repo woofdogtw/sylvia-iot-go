@@ -63,11 +63,16 @@ type testQueueRecvMsgHandler struct {
 var _ gmq.ConnectionHandler = (*testConnConnectHandler)(nil)
 var _ gmq.ConnectionHandler = (*testConnRemoveHandler)(nil)
 var _ gmq.ConnectionHandler = (*testConnCloseHandler)(nil)
-var _ gmq.QueueHandler = (*testQueueConnectHandler)(nil)
-var _ gmq.QueueHandler = (*testQueueRemoveHandler)(nil)
-var _ gmq.QueueHandler = (*testQueueCloseHandler)(nil)
-var _ gmq.QueueHandler = (*testQueueReconnectHandler)(nil)
-var _ gmq.QueueHandler = (*testQueueRecvMsgHandler)(nil)
+var _ gmq.QueueEventHandler = (*testQueueConnectHandler)(nil)
+var _ gmq.QueueEventHandler = (*testQueueRemoveHandler)(nil)
+var _ gmq.QueueEventHandler = (*testQueueCloseHandler)(nil)
+var _ gmq.QueueEventHandler = (*testQueueReconnectHandler)(nil)
+var _ gmq.QueueEventHandler = (*testQueueRecvMsgHandler)(nil)
+var _ gmq.QueueMessageHandler = (*testQueueConnectHandler)(nil)
+var _ gmq.QueueMessageHandler = (*testQueueRemoveHandler)(nil)
+var _ gmq.QueueMessageHandler = (*testQueueCloseHandler)(nil)
+var _ gmq.QueueMessageHandler = (*testQueueReconnectHandler)(nil)
+var _ gmq.QueueMessageHandler = (*testQueueRecvMsgHandler)(nil)
 
 // Constants.
 const (

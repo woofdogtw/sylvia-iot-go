@@ -51,8 +51,10 @@ type netTestDlDataResultHandler struct {
 }
 
 var _ mq.NetMgrEventHandler = (*netTestHandler)(nil)
-var _ gmq.QueueHandler = (*netTestUlDataHandler)(nil)
-var _ gmq.QueueHandler = (*netTestDlDataResultHandler)(nil)
+var _ gmq.QueueEventHandler = (*netTestUlDataHandler)(nil)
+var _ gmq.QueueMessageHandler = (*netTestUlDataHandler)(nil)
+var _ gmq.QueueEventHandler = (*netTestDlDataResultHandler)(nil)
+var _ gmq.QueueMessageHandler = (*netTestDlDataResultHandler)(nil)
 
 func (h *netTestHandler) OnStatusChange(mgr *mq.NetworkMgr, status mq.MgrStatus) {
 	h.statusChanged = true
@@ -366,6 +368,7 @@ func netUlData() {
 		panic("connection is not AMQP/MQTT")
 	}
 	queue.SetHandler(ulHandler)
+	queue.SetMsgHandler(ulHandler)
 	err = queue.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
 
@@ -719,6 +722,7 @@ func netDlDataResult() {
 		panic("connection is not AMQP/MQTT")
 	}
 	queue.SetHandler(dlResultHandler)
+	queue.SetMsgHandler(dlResultHandler)
 	err = queue.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
 

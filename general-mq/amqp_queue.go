@@ -23,7 +23,9 @@ type AmqpQueue struct {
 	// Queue status mutex for changing `status`, `channel` and `evChannel`.
 	statusMutex sync.Mutex
 	// The event handler.
-	handler QueueHandler
+	handler QueueEventHandler
+	// The message handler.
+	msgHandler QueueMessageHandler
 	// The event loop channel.
 	evChannel chan Status
 }
@@ -98,15 +100,23 @@ func (q *AmqpQueue) Status() Status {
 	return q.status
 }
 
-func (q *AmqpQueue) SetHandler(handler QueueHandler) {
+func (q *AmqpQueue) SetHandler(handler QueueEventHandler) {
 	q.handler = handler
 }
 
-func (q *AmqpQueue) ClearHandler() {
-	q.handler = nil
+func (q *AmqpQueue) SetMsgHandler(handler QueueMessageHandler) error {
+	if handler == nil {
+		return errors.New("cannot use nil message handler")
+	}
+	q.msgHandler = handler
+	return nil
 }
 
 func (q *AmqpQueue) Connect() error {
+	if q.opts.IsRecv && q.msgHandler == nil {
+		return fmt.Errorf("%s", NoMsgHandler)
+	}
+
 	q.statusMutex.Lock()
 	if q.evChannel != nil {
 		q.statusMutex.Unlock()
@@ -201,7 +211,7 @@ func (q *AmqpQueue) setConsumer(deliveryChannel <-chan amqp.Delivery) {
 				return
 			}
 
-			handler := q.handler
+			handler := q.msgHandler
 			if handler != nil {
 				msg := &amqpMessage{
 					channel:  channel,

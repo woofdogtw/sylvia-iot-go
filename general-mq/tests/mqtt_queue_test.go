@@ -91,6 +91,7 @@ func mqttQueueConnectNoHandler() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 	testQueues = append(testQueues, queue)
+	queue.SetMsgHandler(&testQueueConnectHandler{})
 
 	err = conn.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -104,7 +105,7 @@ func mqttQueueConnectWithHandler() {
 	resources := mqttQueueResources{}
 
 	handler := testQueueConnectHandler{}
-	err := createMqttConnRsc(&resources, &handler, true)
+	err := createMqttConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -133,6 +134,7 @@ func mqttQueueConnectAfterConnect() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 	testQueues = append(testQueues, queue)
+	queue.SetMsgHandler(&testQueueConnectHandler{})
 
 	err = queue.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -145,14 +147,14 @@ func mqttQueueClearHandler() {
 	resources := mqttQueueResources{}
 
 	handler := testQueueRemoveHandler{}
-	err := createMqttConnRsc(&resources, &handler, true)
+	err := createMqttConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Expect(len(resources.conn) > 0).Should(BeTrue())
 	conn := resources.conn[0]
 	Expect(len(resources.queues) > 0).Should(BeTrue())
 	queue := resources.queues[0]
-	queue.ClearHandler()
+	queue.SetHandler(nil)
 
 	err = conn.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -168,7 +170,7 @@ func mqttQueueClose() {
 	resources := mqttQueueResources{}
 
 	handler := testQueueCloseHandler{}
-	err := createMqttConnRsc(&resources, &handler, true)
+	err := createMqttConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -193,7 +195,7 @@ func mqttQueueCloseAfterClose() {
 	resources := mqttQueueResources{}
 
 	handler := testQueueCloseHandler{}
-	err := createMqttConnRsc(&resources, &handler, true)
+	err := createMqttConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -225,6 +227,12 @@ func mqttQueueSendError() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 
+	err = queue.Connect()
+	Expect(err).Should(HaveOccurred())
+
+	err = queue.SetMsgHandler(nil)
+	Expect(err).Should(HaveOccurred())
+
 	err = queue.SendMsg([]byte(""))
 	Expect(err).Should(HaveOccurred())
 
@@ -245,7 +253,7 @@ func mqttScenarioReconnect() {
 	resources := mqttQueueResources{}
 
 	handler := testQueueReconnectHandler{}
-	err := createMqttConnRsc(&resources, &handler, true)
+	err := createMqttConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -622,7 +630,8 @@ func mqttScenarioDataBestEffort() {
 }
 
 // Create connected (optional) connections/queues for testing connections.
-func createMqttConnRsc(resources *mqttQueueResources, handler gmq.QueueHandler, connect bool) error {
+func createMqttConnRsc(resources *mqttQueueResources, handler gmq.QueueEventHandler,
+	msgHandler gmq.QueueMessageHandler, connect bool) error {
 	conn, err := gmq.NewMqttConnection(gmq.MqttConnectionOptions{})
 	if err != nil {
 		return err
@@ -642,6 +651,9 @@ func createMqttConnRsc(resources *mqttQueueResources, handler gmq.QueueHandler, 
 
 	if handler != nil {
 		queue.SetHandler(handler)
+	}
+	if err := queue.SetMsgHandler(msgHandler); err != nil {
+		return err
 	}
 
 	if !connect {
@@ -709,6 +721,7 @@ func createMqttMsgRsc(resources *mqttQueueResources, opts gmq.MqttQueueOptions,
 			nackErrors:   []string{},
 		}
 		queue.SetHandler(handler)
+		queue.SetMsgHandler(handler)
 		retHandlers = append(retHandlers, handler)
 	}
 

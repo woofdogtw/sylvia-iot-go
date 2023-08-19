@@ -163,7 +163,8 @@ const (
 	netQueuePrefix = "broker.network"
 )
 
-var _ gmq.QueueHandler = (*netMgrMqEventHandler)(nil)
+var _ gmq.QueueEventHandler = (*netMgrMqEventHandler)(nil)
+var _ gmq.QueueMessageHandler = (*netMgrMqEventHandler)(nil)
 
 func NewNetworkMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 	handler NetMgrEventHandler) (*NetworkMgr, error) {
@@ -194,6 +195,7 @@ func NewNetworkMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 		return nil, err
 	}
 	mgr.dldata.SetHandler(mqHandler)
+	mgr.dldata.SetMsgHandler(mqHandler)
 	if err := mgr.dldata.Connect(); err != nil {
 		return nil, err
 	}
@@ -202,6 +204,7 @@ func NewNetworkMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 		return nil, err
 	}
 	mgr.ctrl.SetHandler(mqHandler)
+	mgr.ctrl.SetMsgHandler(mqHandler)
 	if err := mgr.ctrl.Connect(); err != nil {
 		return nil, err
 	}
