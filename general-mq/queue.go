@@ -5,13 +5,16 @@ import (
 )
 
 // The event handler for queues.
-type QueueHandler interface {
+type QueueEventHandler interface {
 	// Triggered by `ConnectionStatus`.
 	OnStatus(queue GmqQueue, status Status)
 
 	// Triggered when there are errors.
 	OnError(queue GmqQueue, err error)
+}
 
+// The message handler for queues.
+type QueueMessageHandler interface {
 	// Triggered for new incoming `Message`s.
 	OnMessage(queue GmqQueue, message Message)
 }
@@ -27,14 +30,16 @@ type GmqQueue interface {
 	// To get the connection status.
 	Status() Status
 
-	// To set the queue event handler.
-	SetHandler(handler QueueHandler)
+	// To set the queue event handler. Use `nil` to remove the handler.
+	SetHandler(handler QueueEventHandler)
 
-	// To remove the queue event handler.
-	ClearHandler()
+	// To set the queue message handler.
+	SetMsgHandler(handler QueueMessageHandler) error
 
 	// To connect to the message queue. The `GmqQueue` will connect to the queue using a go-routine
 	// report status with `Status`.
+	//
+	// `Note` You MUST call `SetMsgHandler()` before `connect()`.
 	Connect() error
 
 	// To close the connection.

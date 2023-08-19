@@ -20,7 +20,9 @@ type MqttQueue struct {
 	// Queue status mutex for changing `status`, `channel` and `evChannel`.
 	statusMutex sync.Mutex
 	// The event handler.
-	handler QueueHandler
+	handler QueueEventHandler
+	// The message handler.
+	msgHandler QueueMessageHandler
 	// The event loop channel.
 	evChannel chan Status
 }
@@ -91,15 +93,23 @@ func (q *MqttQueue) Status() Status {
 	return q.status
 }
 
-func (q *MqttQueue) SetHandler(handler QueueHandler) {
+func (q *MqttQueue) SetHandler(handler QueueEventHandler) {
 	q.handler = handler
 }
 
-func (q *MqttQueue) ClearHandler() {
-	q.handler = nil
+func (q *MqttQueue) SetMsgHandler(handler QueueMessageHandler) error {
+	if handler == nil {
+		return errors.New("cannot use nil message handler")
+	}
+	q.msgHandler = handler
+	return nil
 }
 
 func (q *MqttQueue) Connect() error {
+	if q.opts.IsRecv && q.msgHandler == nil {
+		return fmt.Errorf("%s", NoMsgHandler)
+	}
+
 	q.statusMutex.Lock()
 	if q.evChannel != nil {
 		q.statusMutex.Unlock()
@@ -190,7 +200,7 @@ func (m *mqttMessage) Nack() error {
 }
 
 func (m *mqttQueuePacketHandler) OnPublish(msg mqtt.Message) {
-	handler := m.queue.handler
+	handler := m.queue.msgHandler
 	if handler != nil {
 		handler.OnMessage(m.queue, &mqttMessage{rawMessage: msg})
 	}

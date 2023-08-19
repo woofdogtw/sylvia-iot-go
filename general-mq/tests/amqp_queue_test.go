@@ -99,6 +99,7 @@ func amqpQueueConnectNoHandler() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 	testQueues = append(testQueues, queue)
+	queue.SetMsgHandler(&testQueueConnectHandler{})
 
 	err = conn.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -112,7 +113,7 @@ func amqpQueueConnectWithHandler() {
 	resources := amqpQueueResources{}
 
 	handler := testQueueConnectHandler{}
-	err := createAmqpConnRsc(&resources, &handler, true)
+	err := createAmqpConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -142,6 +143,7 @@ func amqpQueueConnectAfterConnect() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 	testQueues = append(testQueues, queue)
+	queue.SetMsgHandler(&testQueueConnectHandler{})
 
 	err = queue.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -154,14 +156,14 @@ func amqpQueueClearHandler() {
 	resources := amqpQueueResources{}
 
 	handler := testQueueRemoveHandler{}
-	err := createAmqpConnRsc(&resources, &handler, true)
+	err := createAmqpConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	Expect(len(resources.conn) > 0).Should(BeTrue())
 	conn := resources.conn[0]
 	Expect(len(resources.queues) > 0).Should(BeTrue())
 	queue := resources.queues[0]
-	queue.ClearHandler()
+	queue.SetHandler(nil)
 
 	err = conn.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
@@ -177,7 +179,7 @@ func amqpQueueClose() {
 	resources := amqpQueueResources{}
 
 	handler := testQueueCloseHandler{}
-	err := createAmqpConnRsc(&resources, &handler, true)
+	err := createAmqpConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -202,7 +204,7 @@ func amqpQueueCloseAfterClose() {
 	resources := amqpQueueResources{}
 
 	handler := testQueueCloseHandler{}
-	err := createAmqpConnRsc(&resources, &handler, true)
+	err := createAmqpConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -235,6 +237,12 @@ func amqpQueueSendError() {
 	Expect(err).ShouldNot(HaveOccurred())
 	Expect(queue).ShouldNot(BeNil())
 
+	err = queue.Connect()
+	Expect(err).Should(HaveOccurred())
+
+	err = queue.SetMsgHandler(nil)
+	Expect(err).Should(HaveOccurred())
+
 	err = queue.SendMsg([]byte(""))
 	Expect(err).Should(HaveOccurred())
 
@@ -255,7 +263,7 @@ func amqpScenarioReconnect() {
 	resources := amqpQueueResources{}
 
 	handler := testQueueReconnectHandler{}
-	err := createAmqpConnRsc(&resources, &handler, true)
+	err := createAmqpConnRsc(&resources, &handler, &handler, true)
 	Expect(err).ShouldNot(HaveOccurred())
 
 	for _, queue := range resources.queues {
@@ -746,7 +754,8 @@ func amqpScenarioDataNack() {
 }
 
 // Create connected (optional) connections/queues for testing connections.
-func createAmqpConnRsc(resources *amqpQueueResources, handler gmq.QueueHandler, connect bool) error {
+func createAmqpConnRsc(resources *amqpQueueResources, handler gmq.QueueEventHandler,
+	msgHandler gmq.QueueMessageHandler, connect bool) error {
 	conn, err := gmq.NewAmqpConnection(gmq.AmqpConnectionOptions{})
 	if err != nil {
 		return err
@@ -767,6 +776,9 @@ func createAmqpConnRsc(resources *amqpQueueResources, handler gmq.QueueHandler, 
 
 	if handler != nil {
 		queue.SetHandler(handler)
+	}
+	if err := queue.SetMsgHandler(msgHandler); err != nil {
+		return err
 	}
 
 	if !connect {
@@ -818,6 +830,7 @@ func createAmqpMsgRsc(resources *amqpQueueResources, opts gmq.AmqpQueueOptions,
 			nackErrors:   []string{},
 		}
 		queue.SetHandler(handler)
+		queue.SetMsgHandler(handler)
 		retHandlers = append(retHandlers, handler)
 	}
 

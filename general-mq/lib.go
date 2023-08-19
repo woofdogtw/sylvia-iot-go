@@ -8,8 +8,10 @@ type Status int
 
 // general-mq error.
 const (
+	// The queue does not have a message handler.
+	NoMsgHandler GmqError = iota
 	// The connection is not connected or the queue (topic) is not connected (declared/subscribed).
-	NotConnected GmqError = iota
+	NotConnected
 	// The queue is a receiver that cannot send messages.
 	QueueIsReceiver
 )
@@ -37,6 +39,8 @@ const (
 
 func (e GmqError) String() string {
 	switch e {
+	case NoMsgHandler:
+		return "no message handler"
 	case NotConnected:
 		return "not connected"
 	case QueueIsReceiver:

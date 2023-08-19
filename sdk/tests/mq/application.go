@@ -31,7 +31,8 @@ type appTestDlDataHandler struct {
 }
 
 var _ mq.AppMgrEventHandler = (*appTestHandler)(nil)
-var _ gmq.QueueHandler = (*appTestDlDataHandler)(nil)
+var _ gmq.QueueEventHandler = (*appTestDlDataHandler)(nil)
+var _ gmq.QueueMessageHandler = (*appTestDlDataHandler)(nil)
 
 func (h *appTestHandler) OnStatusChange(mgr *mq.ApplicationMgr, status mq.MgrStatus) {
 	h.statusChanged = true
@@ -518,6 +519,7 @@ func appDlData() {
 		panic("connection is not AMQP/MQTT")
 	}
 	queue.SetHandler(dlHandler)
+	queue.SetMsgHandler(dlHandler)
 	err = queue.Connect()
 	Expect(err).ShouldNot(HaveOccurred())
 

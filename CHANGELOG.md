@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.0.5 - 2023-08-19
+
+### Changed
+
+- **general-mq/sdk**: **INCOMPATIBLE** API modifications.
+    - Separates errors, status, messages into three two handlers and three callback functions.
+
+### Fixed
+
+- **sdk**: Fix the dependent version.
+
 ## 0.0.4 - 2023-08-12
 
 ### Fixed

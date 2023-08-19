@@ -116,7 +116,8 @@ const (
 	appQueuePrefix = "broker.application"
 )
 
-var _ gmq.QueueHandler = (*appMgrMqEventHandler)(nil)
+var _ gmq.QueueEventHandler = (*appMgrMqEventHandler)(nil)
+var _ gmq.QueueMessageHandler = (*appMgrMqEventHandler)(nil)
 
 func NewApplicationMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 	handler AppMgrEventHandler) (*ApplicationMgr, error) {
@@ -147,6 +148,7 @@ func NewApplicationMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 	}
 	mqHandler := &appMgrMqEventHandler{mgr: mgr}
 	mgr.uldata.SetHandler(mqHandler)
+	mgr.uldata.SetMsgHandler(mqHandler)
 	if err := mgr.uldata.Connect(); err != nil {
 		return nil, err
 	}
@@ -155,10 +157,12 @@ func NewApplicationMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
 		return nil, err
 	}
 	mgr.dldataResp.SetHandler(mqHandler)
+	mgr.dldataResp.SetMsgHandler(mqHandler)
 	if err := mgr.dldataResp.Connect(); err != nil {
 		return nil, err
 	}
 	mgr.dldataResult.SetHandler(mqHandler)
+	mgr.dldataResult.SetMsgHandler(mqHandler)
 	if err := mgr.dldataResult.Connect(); err != nil {
 		return nil, err
 	}

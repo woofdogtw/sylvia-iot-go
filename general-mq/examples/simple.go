@@ -19,7 +19,8 @@ const (
 )
 
 var _ gmq.ConnectionHandler = (*connHandler)(nil)
-var _ gmq.QueueHandler = (*queueHandler)(nil)
+var _ gmq.QueueEventHandler = (*queueHandler)(nil)
+var _ gmq.QueueMessageHandler = (*queueHandler)(nil)
 
 func (c *connHandler) OnStatus(handlerID string, conn gmq.GmqConnection, status gmq.Status) {
 	fmt.Printf("handlerID: %s, status: %s\n", handlerID, status)
@@ -100,7 +101,9 @@ func testAmqp() {
 		fmt.Println("new AmqpQueue error: " + err.Error())
 		return
 	}
-	recvQueue1.SetHandler(&queueHandler{name: "recv1"})
+	handler1 := &queueHandler{name: "recv1"}
+	recvQueue1.SetHandler(handler1)
+	recvQueue1.SetMsgHandler(handler1)
 	if err := recvQueue1.Connect(); err != nil {
 		fmt.Println("connect recv1 queue error: " + err.Error())
 		return
@@ -110,7 +113,9 @@ func testAmqp() {
 		fmt.Println("new AmqpQueue error: " + err.Error())
 		return
 	}
-	recvQueue2.SetHandler(&queueHandler{name: "recv2"})
+	handler2 := &queueHandler{name: "recv2"}
+	recvQueue2.SetHandler(handler2)
+	recvQueue2.SetMsgHandler(handler2)
 	if err := recvQueue2.Connect(); err != nil {
 		fmt.Println("connect recv2 queue error: " + err.Error())
 		return
@@ -121,7 +126,7 @@ func testAmqp() {
 			fmt.Println("connect error: " + err.Error())
 			return
 		}
-		for count := 2; count > 0; count-- {
+		for count := 10; count > 0; count-- {
 			time.Sleep(2 * time.Second)
 			str := fmt.Sprintf("count %d", count)
 			if err := sendQueue.SendMsg([]byte(str)); err != nil {
@@ -186,7 +191,9 @@ func testMqtt() {
 		fmt.Println("new MqttQueue error: " + err.Error())
 		return
 	}
-	recvQueue1.SetHandler(&queueHandler{name: "recv1"})
+	handler1 := &queueHandler{name: "recv1"}
+	recvQueue1.SetHandler(handler1)
+	recvQueue1.SetMsgHandler(handler1)
 	if err := recvQueue1.Connect(); err != nil {
 		fmt.Println("connect recv1 queue error: " + err.Error())
 		return
@@ -196,7 +203,9 @@ func testMqtt() {
 		fmt.Println("new MqttQueue error: " + err.Error())
 		return
 	}
-	recvQueue2.SetHandler(&queueHandler{name: "recv2"})
+	handler2 := &queueHandler{name: "recv2"}
+	recvQueue2.SetHandler(handler2)
+	recvQueue2.SetMsgHandler(handler2)
 	if err := recvQueue2.Connect(); err != nil {
 		fmt.Println("connect recv2 queue error: " + err.Error())
 		return
@@ -211,7 +220,7 @@ func testMqtt() {
 			fmt.Println("connect 2 error: " + err.Error())
 			return
 		}
-		for count := 2; count > 0; count-- {
+		for count := 10; count > 0; count-- {
 			time.Sleep(2 * time.Second)
 			str := fmt.Sprintf("count %d", count)
 			if err := sendQueue.SendMsg([]byte(str)); err != nil {
