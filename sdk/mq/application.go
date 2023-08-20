@@ -22,18 +22,18 @@ type AppUlData struct {
 	NetworkCode string
 	NetworkAddr string
 	IsPublic    bool
-	Data        string
+	Data        []byte
 	Extension   map[string]interface{}
 }
 
 // Downlink data from application to broker.
 type AppDlData struct {
-	CorrelationID string                 `json:"correlationId"`
-	DeviceID      string                 `json:"deviceId,omitempty"`
-	NetworkCode   string                 `json:"networkCode,omitempty"`
-	NetworkAddr   string                 `json:"networkAddr,omitempty"`
-	Data          string                 `json:"data"`
-	Extension     map[string]interface{} `json:"extension,omitempty"`
+	CorrelationID string
+	DeviceID      string
+	NetworkCode   string
+	NetworkAddr   string
+	Data          []byte
+	Extension     map[string]interface{}
 }
 
 // Downlink data response for `DlData`.
@@ -109,6 +109,15 @@ type appUlDataInner struct {
 	IsPublic    bool                   `json:"isPublic"`
 	Data        string                 `json:"data"`
 	Extension   map[string]interface{} `json:"extension"`
+}
+
+type appDlDataInner struct {
+	CorrelationID string                 `json:"correlationId"`
+	DeviceID      string                 `json:"deviceId,omitempty"`
+	NetworkCode   string                 `json:"networkCode,omitempty"`
+	NetworkAddr   string                 `json:"networkAddr,omitempty"`
+	Data          string                 `json:"data"`
+	Extension     map[string]interface{} `json:"extension,omitempty"`
 }
 
 // Constants.
@@ -223,20 +232,23 @@ func (mgr *ApplicationMgr) Close() error {
 }
 
 // Send downlink data `DlData` to the broker.
-func (mgr *ApplicationMgr) SendDlData(data *AppDlData) error {
+func (mgr *ApplicationMgr) SendDlData(data AppDlData) error {
 	if data.CorrelationID == "" {
 		return errors.New(errParamCorrID)
 	}
 	if data.DeviceID == "" && (data.NetworkCode == "" || data.NetworkAddr == "") {
 		return errors.New(errParamAppDev)
 	}
-	if data.Data != "" {
-		if _, err := hex.DecodeString(data.Data); err != nil {
-			return errors.New(errParamData)
-		}
-	}
 
-	payload, err := json.Marshal(data)
+	msg := appDlDataInner{
+		CorrelationID: data.CorrelationID,
+		DeviceID:      data.DeviceID,
+		NetworkCode:   data.NetworkCode,
+		NetworkAddr:   data.NetworkAddr,
+		Data:          hex.EncodeToString(data.Data),
+		Extension:     data.Extension,
+	}
+	payload, err := json.Marshal(msg)
 	if err != nil {
 		return err
 	}
@@ -263,11 +275,10 @@ func (h *appMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message
 			_ = message.Ack()
 			return
 		}
-		if data.Data != "" {
-			if _, err := hex.DecodeString(data.Data); err != nil {
-				_ = message.Ack()
-				return
-			}
+		dataBytes, err := hex.DecodeString(data.Data)
+		if err != nil {
+			_ = message.Ack()
+			return
 		}
 		dTime, err := time.Parse(constants.TimeFormat, data.Time)
 		if err != nil {
@@ -288,7 +299,7 @@ func (h *appMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message
 			NetworkCode: data.NetworkCode,
 			NetworkAddr: data.NetworkAddr,
 			IsPublic:    data.IsPublic,
-			Data:        data.Data,
+			Data:        dataBytes,
 			Extension:   data.Extension,
 		}
 		handler := h.mgr.handler

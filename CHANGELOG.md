@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.6 - 2023-08-20
+
+### Changed
+
+- **sdk**: **INCOMPATIBLE** API modifications.
+    - Modify the `Data` field from `string` to `[]byte` for convenience.
+
 ## 0.0.5 - 2023-08-19
 
 ### Changed
