@@ -31,13 +31,13 @@
             <td class="headerValue">sdk.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">251</td>
-            <td class="headerCovTableEntry">272</td>
-            <td class="headerCovTableEntryHi">92.3 %</td>
+            <td class="headerCovTableEntry">249</td>
+            <td class="headerCovTableEntry">273</td>
+            <td class="headerCovTableEntryHi">91.2 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-19 00:54:28</td>
+            <td class="headerValue">2023-08-20 02:52:36</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -80,7 +80,7 @@
 <a name="18"><span class="lineNum">      18 </span>            : type NetUlData struct {</a>
 <a name="19"><span class="lineNum">      19 </span>            :         Time        time.Time</a>
 <a name="20"><span class="lineNum">      20 </span>            :         NetworkAddr string</a>
-<a name="21"><span class="lineNum">      21 </span>            :         Data        string</a>
+<a name="21"><span class="lineNum">      21 </span>            :         Data        []byte</a>
 <a name="22"><span class="lineNum">      22 </span>            :         Extension   map[string]interface{}</a>
 <a name="23"><span class="lineNum">      23 </span>            : }</a>
 <a name="24"><span class="lineNum">      24 </span>            : </a>
@@ -90,7 +90,7 @@
 <a name="28"><span class="lineNum">      28 </span>            :         Pub         time.Time</a>
 <a name="29"><span class="lineNum">      29 </span>            :         ExpiresIn   int64</a>
 <a name="30"><span class="lineNum">      30 </span>            :         NetworkAddr string</a>
-<a name="31"><span class="lineNum">      31 </span>            :         Data        string</a>
+<a name="31"><span class="lineNum">      31 </span>            :         Data        []byte</a>
 <a name="32"><span class="lineNum">      32 </span>            :         Extension   map[string]interface{}</a>
 <a name="33"><span class="lineNum">      33 </span>            : }</a>
 <a name="34"><span class="lineNum">      34 </span>            : </a>
@@ -295,9 +295,9 @@
 <a name="233"><span class="lineNum">     233 </span><span class="lineCov">          2 : }</span></a>
 <a name="234"><span class="lineNum">     234 </span>            : </a>
 <a name="235"><span class="lineNum">     235 </span>            : // Manager status.</a>
-<a name="236"><span class="lineNum">     236 </span><span class="lineCov">       1585 : func (mgr *NetworkMgr) Status() MgrStatus {</span></a>
-<a name="237"><span class="lineNum">     237 </span><span class="lineCov">       1585 :         return mgr.status</span></a>
-<a name="238"><span class="lineNum">     238 </span><span class="lineCov">       1585 : }</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">       1589 : func (mgr *NetworkMgr) Status() MgrStatus {</span></a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineCov">       1589 :         return mgr.status</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineCov">       1589 : }</span></a>
 <a name="239"><span class="lineNum">     239 </span>            : </a>
 <a name="240"><span class="lineNum">     240 </span>            : // Detail status of each message queue. Please ignore `DlDataResp`.</a>
 <a name="241"><span class="lineNum">     241 </span><span class="lineCov">          2 : func (mgr *NetworkMgr) MqStatus() DataMqStatus {</span></a>
@@ -327,68 +327,68 @@
 <a name="265"><span class="lineNum">     265 </span>            : }</a>
 <a name="266"><span class="lineNum">     266 </span>            : </a>
 <a name="267"><span class="lineNum">     267 </span>            : // Send uplink data `UlData` to the broker.</a>
-<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          8 : func (mgr *NetworkMgr) SendUlData(data *NetUlData) error {</span></a>
-<a name="269"><span class="lineNum">     269 </span><span class="lineCov">         10 :         if data.NetworkAddr == &quot;&quot; {</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          6 : func (mgr *NetworkMgr) SendUlData(data NetUlData) error {</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">          8 :         if data.NetworkAddr == &quot;&quot; {</span></a>
 <a name="270"><span class="lineNum">     270 </span><span class="lineCov">          2 :                 return errors.New(errParamNetDev)</span></a>
 <a name="271"><span class="lineNum">     271 </span><span class="lineCov">          2 :         }</span></a>
-<a name="272"><span class="lineNum">     272 </span><span class="lineCov">         12 :         if data.Data != &quot;&quot; {</span></a>
-<a name="273"><span class="lineNum">     273 </span><span class="lineCov">          8 :                 if _, err := hex.DecodeString(data.Data); err != nil {</span></a>
-<a name="274"><span class="lineNum">     274 </span><span class="lineCov">          2 :                         return errors.New(errParamData)</span></a>
-<a name="275"><span class="lineNum">     275 </span><span class="lineCov">          2 :                 }</span></a>
-<a name="276"><span class="lineNum">     276 </span>            :         }</a>
-<a name="277"><span class="lineNum">     277 </span>            : </a>
-<a name="278"><span class="lineNum">     278 </span><span class="lineCov">          4 :         msg := netUlDataInner{</span></a>
-<a name="279"><span class="lineNum">     279 </span><span class="lineCov">          4 :                 Time:        data.Time.Format(constants.TimeFormat),</span></a>
-<a name="280"><span class="lineNum">     280 </span><span class="lineCov">          4 :                 NetworkAddr: data.NetworkAddr,</span></a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineCov">          4 :                 Data:        data.Data,</span></a>
-<a name="282"><span class="lineNum">     282 </span><span class="lineCov">          4 :                 Extension:   data.Extension,</span></a>
-<a name="283"><span class="lineNum">     283 </span><span class="lineCov">          4 :         }</span></a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineCov">          4 :         payload, err := json.Marshal(msg)</span></a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineCov">          4 :         if err != nil {</span></a>
-<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :                 return err</span></a>
-<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :         }</span></a>
-<a name="288"><span class="lineNum">     288 </span>            : </a>
-<a name="289"><span class="lineNum">     289 </span><span class="lineCov">          8 :         go func() {</span></a>
-<a name="290"><span class="lineNum">     290 </span><span class="lineCov">          4 :                 _ = mgr.uldata.SendMsg(payload)</span></a>
-<a name="291"><span class="lineNum">     291 </span><span class="lineCov">          4 :         }()</span></a>
-<a name="292"><span class="lineNum">     292 </span><span class="lineCov">          4 :         return nil</span></a>
-<a name="293"><span class="lineNum">     293 </span>            : }</a>
-<a name="294"><span class="lineNum">     294 </span>            : </a>
-<a name="295"><span class="lineNum">     295 </span>            : // Send uplink data `DlDataResult` to the broker.</a>
-<a name="296"><span class="lineNum">     296 </span><span class="lineCov">          6 : func (mgr *NetworkMgr) SendDlDataResult(data *NetDlDataResult) error {</span></a>
-<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          8 :         if data.DataID == &quot;&quot; {</span></a>
-<a name="298"><span class="lineNum">     298 </span><span class="lineCov">          2 :                 return errors.New(errParamDataID)</span></a>
-<a name="299"><span class="lineNum">     299 </span><span class="lineCov">          2 :         }</span></a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineCov">          4 :         msg := netUlDataInner{</span></a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">          4 :                 Time:        data.Time.Format(constants.TimeFormat),</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineCov">          4 :                 NetworkAddr: data.NetworkAddr,</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">          4 :                 Data:        hex.EncodeToString(data.Data),</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">          4 :                 Extension:   data.Extension,</span></a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">          4 :         }</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineCov">          4 :         payload, err := json.Marshal(msg)</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineCov">          4 :         if err != nil {</span></a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :                 return err</span></a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :         }</span></a>
+<a name="283"><span class="lineNum">     283 </span>            : </a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineCov">          8 :         go func() {</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">          4 :                 _ = mgr.uldata.SendMsg(payload)</span></a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineCov">          4 :         }()</span></a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineCov">          4 :         return nil</span></a>
+<a name="288"><span class="lineNum">     288 </span>            : }</a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span>            : // Send uplink data `DlDataResult` to the broker.</a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineCov">          6 : func (mgr *NetworkMgr) SendDlDataResult(data NetDlDataResult) error {</span></a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineCov">          8 :         if data.DataID == &quot;&quot; {</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineCov">          2 :                 return errors.New(errParamDataID)</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineCov">          2 :         }</span></a>
+<a name="295"><span class="lineNum">     295 </span>            : </a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineCov">          4 :         payload, err := json.Marshal(data)</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          4 :         if err != nil {</span></a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :                 return err</span></a>
+<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 :         }</span></a>
 <a name="300"><span class="lineNum">     300 </span>            : </a>
-<a name="301"><span class="lineNum">     301 </span><span class="lineCov">          4 :         payload, err := json.Marshal(data)</span></a>
-<a name="302"><span class="lineNum">     302 </span><span class="lineCov">          4 :         if err != nil {</span></a>
-<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :                 return err</span></a>
-<a name="304"><span class="lineNum">     304 </span><span class="lineNoCov">          0 :         }</span></a>
-<a name="305"><span class="lineNum">     305 </span>            : </a>
-<a name="306"><span class="lineNum">     306 </span><span class="lineCov">          8 :         go func() {</span></a>
-<a name="307"><span class="lineNum">     307 </span><span class="lineCov">          4 :                 _ = mgr.dldataResult.SendMsg(payload)</span></a>
-<a name="308"><span class="lineNum">     308 </span><span class="lineCov">          4 :         }()</span></a>
-<a name="309"><span class="lineNum">     309 </span><span class="lineCov">          4 :         return nil</span></a>
-<a name="310"><span class="lineNum">     310 </span>            : }</a>
-<a name="311"><span class="lineNum">     311 </span>            : </a>
-<a name="312"><span class="lineNum">     312 </span><span class="lineCov">        240 : func (h *netMgrMqEventHandler) OnStatus(queue gmq.GmqQueue, status gmq.Status) {</span></a>
-<a name="313"><span class="lineNum">     313 </span><span class="lineCov">        240 :         h.onEvent(queue)</span></a>
-<a name="314"><span class="lineNum">     314 </span><span class="lineCov">        240 : }</span></a>
-<a name="315"><span class="lineNum">     315 </span>            : </a>
-<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 : func (h *netMgrMqEventHandler) OnError(queue gmq.GmqQueue, err error) {</span></a>
-<a name="317"><span class="lineNum">     317 </span><span class="lineNoCov">          0 :         h.onEvent(queue)</span></a>
-<a name="318"><span class="lineNum">     318 </span><span class="lineNoCov">          0 : }</span></a>
-<a name="319"><span class="lineNum">     319 </span>            : </a>
-<a name="320"><span class="lineNum">     320 </span><span class="lineCov">         57 : func (h *netMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message) {</span></a>
-<a name="321"><span class="lineNum">     321 </span><span class="lineCov">         57 :         queueName := queue.Name()</span></a>
-<a name="322"><span class="lineNum">     322 </span><span class="lineCov">         68 :         if queueName == h.mgr.dldata.Name() {</span></a>
-<a name="323"><span class="lineNum">     323 </span><span class="lineCov">         11 :                 var data netDlDataInner</span></a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineCov">         13 :                 if err := json.Unmarshal(message.Payload(), &amp;data); err != nil {</span></a>
-<a name="325"><span class="lineNum">     325 </span><span class="lineCov">          2 :                         _ = message.Ack()</span></a>
-<a name="326"><span class="lineNum">     326 </span><span class="lineCov">          2 :                         return</span></a>
-<a name="327"><span class="lineNum">     327 </span><span class="lineCov">          2 :                 }</span></a>
-<a name="328"><span class="lineNum">     328 </span><span class="lineCov">          8 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></a>
-<a name="329"><span class="lineNum">     329 </span><span class="lineCov">         10 :                 if err != nil {</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">          8 :         go func() {</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineCov">          4 :                 _ = mgr.dldataResult.SendMsg(payload)</span></a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineCov">          4 :         }()</span></a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineCov">          4 :         return nil</span></a>
+<a name="305"><span class="lineNum">     305 </span>            : }</a>
+<a name="306"><span class="lineNum">     306 </span>            : </a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineCov">        240 : func (h *netMgrMqEventHandler) OnStatus(queue gmq.GmqQueue, status gmq.Status) {</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineCov">        240 :         h.onEvent(queue)</span></a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineCov">        240 : }</span></a>
+<a name="310"><span class="lineNum">     310 </span>            : </a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineNoCov">          0 : func (h *netMgrMqEventHandler) OnError(queue gmq.GmqQueue, err error) {</span></a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineNoCov">          0 :         h.onEvent(queue)</span></a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">         57 : func (h *netMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message) {</span></a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineCov">         57 :         queueName := queue.Name()</span></a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineCov">         68 :         if queueName == h.mgr.dldata.Name() {</span></a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineCov">         11 :                 var data netDlDataInner</span></a>
+<a name="319"><span class="lineNum">     319 </span><span class="lineCov">         13 :                 if err := json.Unmarshal(message.Payload(), &amp;data); err != nil {</span></a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineCov">          2 :                         _ = message.Ack()</span></a>
+<a name="321"><span class="lineNum">     321 </span><span class="lineCov">          2 :                         return</span></a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineCov">          2 :                 }</span></a>
+<a name="323"><span class="lineNum">     323 </span><span class="lineCov">          9 :                 dataBytes, err := hex.DecodeString(data.Data)</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineCov">          9 :                 if err != nil {</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineNoCov">          0 :                         _ = message.Ack()</span></a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 :                         return</span></a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :                 }</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">          9 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineCov">         11 :                 if err != nil {</span></a>
 <a name="330"><span class="lineNum">     330 </span><span class="lineCov">          2 :                         _ = message.Ack()</span></a>
 <a name="331"><span class="lineNum">     331 </span><span class="lineCov">          2 :                         return</span></a>
 <a name="332"><span class="lineNum">     332 </span><span class="lineCov">          2 :                 }</span></a>
@@ -397,7 +397,7 @@
 <a name="335"><span class="lineNum">     335 </span><span class="lineCov">          7 :                         Pub:         dPub.UTC(),</span></a>
 <a name="336"><span class="lineNum">     336 </span><span class="lineCov">          7 :                         ExpiresIn:   data.ExpiresIn,</span></a>
 <a name="337"><span class="lineNum">     337 </span><span class="lineCov">          7 :                         NetworkAddr: data.NetworkAddr,</span></a>
-<a name="338"><span class="lineNum">     338 </span><span class="lineCov">          7 :                         Data:        data.Data,</span></a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineCov">          7 :                         Data:        dataBytes,</span></a>
 <a name="339"><span class="lineNum">     339 </span><span class="lineCov">          7 :                         Extension:   data.Extension,</span></a>
 <a name="340"><span class="lineNum">     340 </span><span class="lineCov">          7 :                 }</span></a>
 <a name="341"><span class="lineNum">     341 </span><span class="lineCov">          7 :                 handler := h.mgr.handler</span></a>
