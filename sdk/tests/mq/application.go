@@ -1,6 +1,7 @@
 package mq
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"sync"
@@ -352,7 +353,7 @@ func appUlData() {
 			Expect(data.NetworkCode).Should(Equal(data1["networkCode"]))
 			Expect(data.NetworkAddr).Should(Equal(data1["networkAddr"]))
 			Expect(data.IsPublic).Should(Equal(data1["isPublic"]))
-			Expect(data.Data).Should(Equal(data1["data"]))
+			Expect(hex.EncodeToString(data.Data)).Should(Equal(data1["data"]))
 			Expect(data.Extension).Should(BeNil())
 		} else if data.DataID == "2" {
 			Expect(data.Time.UnixMilli()).Should(Equal(now.UnixMilli() + 1))
@@ -362,7 +363,7 @@ func appUlData() {
 			Expect(data.NetworkCode).Should(Equal(data2["networkCode"]))
 			Expect(data.NetworkAddr).Should(Equal(data2["networkAddr"]))
 			Expect(data.IsPublic).Should(Equal(data2["isPublic"]))
-			Expect(data.Data).Should(Equal(data2["data"]))
+			Expect(hex.EncodeToString(data.Data)).Should(Equal(data2["data"]))
 			Expect(data.Extension).Should(Equal(data2["extension"]))
 		} else if data.DataID == "3" {
 			Expect(data.Time.UnixMilli()).Should(Equal(now.UnixMilli() + 2))
@@ -372,7 +373,7 @@ func appUlData() {
 			Expect(data.NetworkCode).Should(Equal(data3["networkCode"]))
 			Expect(data.NetworkAddr).Should(Equal(data3["networkAddr"]))
 			Expect(data.IsPublic).Should(Equal(data3["isPublic"]))
-			Expect(data.Data).Should(Equal(data3["data"]))
+			Expect(hex.EncodeToString(data.Data)).Should(Equal(data3["data"]))
 			Expect(data.Extension).Should(BeNil())
 		} else {
 			panic("receive wrong data " + data.DataID)
@@ -538,19 +539,19 @@ func appDlData() {
 	}
 	Expect(mgr.Status()).Should(Equal(mq.Ready))
 
-	data1 := &mq.AppDlData{
+	data1 := mq.AppDlData{
 		CorrelationID: "1",
 		DeviceID:      "device1",
-		Data:          "01",
+		Data:          []byte{1},
 		Extension:     map[string]interface{}{"key": "value"},
 	}
 	err = mgr.SendDlData(data1)
 	Expect(err).ShouldNot(HaveOccurred())
-	data2 := &mq.AppDlData{
+	data2 := mq.AppDlData{
 		CorrelationID: "2",
 		NetworkCode:   "code",
 		NetworkAddr:   "addr2",
-		Data:          "02",
+		Data:          []byte{2},
 	}
 	err = mgr.SendDlData(data2)
 	Expect(err).ShouldNot(HaveOccurred())
@@ -570,13 +571,13 @@ func appDlData() {
 			Expect(gjson.GetBytes(data, "deviceId").String()).Should(Equal(data1.DeviceID))
 			Expect(gjson.GetBytes(data, "networkCode").Exists()).ShouldNot(BeTrue())
 			Expect(gjson.GetBytes(data, "networkAddr").Exists()).ShouldNot(BeTrue())
-			Expect(gjson.GetBytes(data, "data").String()).Should(Equal(data1.Data))
+			Expect(gjson.GetBytes(data, "data").String()).Should(Equal(hex.EncodeToString(data1.Data)))
 			Expect(gjson.GetBytes(data, "extension.key").String()).Should(Equal("value"))
 		} else if gjson.GetBytes(data, "correlationId").String() == "2" {
 			Expect(gjson.GetBytes(data, "deviceId").Exists()).ShouldNot(BeTrue())
 			Expect(gjson.GetBytes(data, "networkCode").String()).Should(Equal(data2.NetworkCode))
 			Expect(gjson.GetBytes(data, "networkAddr").String()).Should(Equal(data2.NetworkAddr))
-			Expect(gjson.GetBytes(data, "data").String()).Should(Equal(data2.Data))
+			Expect(gjson.GetBytes(data, "data").String()).Should(Equal(hex.EncodeToString(data2.Data)))
 			Expect(gjson.GetBytes(data, "extension").Exists()).ShouldNot(BeTrue())
 		} else {
 			panic("receive wrong data " + gjson.GetBytes(data, "correlationId").String())
@@ -609,18 +610,15 @@ func appDlDataWrong() {
 	}
 	Expect(mgr.Status()).Should(Equal(mq.Ready))
 
-	data := &mq.AppDlData{
+	data := mq.AppDlData{
 		DeviceID: "device",
-		Data:     "00",
+		Data:     []byte{0},
 	}
 	Expect(mgr.SendDlData(data)).Should(HaveOccurred())
 	data.CorrelationID = "1"
 	data.DeviceID = ""
 	Expect(mgr.SendDlData(data)).Should(HaveOccurred())
 	data.NetworkCode = "code"
-	Expect(mgr.SendDlData(data)).Should(HaveOccurred())
-	data.DeviceID = "device"
-	data.Data = "gg"
 	Expect(mgr.SendDlData(data)).Should(HaveOccurred())
 }
 

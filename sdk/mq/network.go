@@ -18,7 +18,7 @@ import (
 type NetUlData struct {
 	Time        time.Time
 	NetworkAddr string
-	Data        string
+	Data        []byte
 	Extension   map[string]interface{}
 }
 
@@ -28,7 +28,7 @@ type NetDlData struct {
 	Pub         time.Time
 	ExpiresIn   int64
 	NetworkAddr string
-	Data        string
+	Data        []byte
 	Extension   map[string]interface{}
 }
 
@@ -265,20 +265,15 @@ func (mgr *NetworkMgr) Close() error {
 }
 
 // Send uplink data `UlData` to the broker.
-func (mgr *NetworkMgr) SendUlData(data *NetUlData) error {
+func (mgr *NetworkMgr) SendUlData(data NetUlData) error {
 	if data.NetworkAddr == "" {
 		return errors.New(errParamNetDev)
-	}
-	if data.Data != "" {
-		if _, err := hex.DecodeString(data.Data); err != nil {
-			return errors.New(errParamData)
-		}
 	}
 
 	msg := netUlDataInner{
 		Time:        data.Time.Format(constants.TimeFormat),
 		NetworkAddr: data.NetworkAddr,
-		Data:        data.Data,
+		Data:        hex.EncodeToString(data.Data),
 		Extension:   data.Extension,
 	}
 	payload, err := json.Marshal(msg)
@@ -293,7 +288,7 @@ func (mgr *NetworkMgr) SendUlData(data *NetUlData) error {
 }
 
 // Send uplink data `DlDataResult` to the broker.
-func (mgr *NetworkMgr) SendDlDataResult(data *NetDlDataResult) error {
+func (mgr *NetworkMgr) SendDlDataResult(data NetDlDataResult) error {
 	if data.DataID == "" {
 		return errors.New(errParamDataID)
 	}
@@ -325,6 +320,11 @@ func (h *netMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message
 			_ = message.Ack()
 			return
 		}
+		dataBytes, err := hex.DecodeString(data.Data)
+		if err != nil {
+			_ = message.Ack()
+			return
+		}
 		dPub, err := time.Parse(constants.TimeFormat, data.Pub)
 		if err != nil {
 			_ = message.Ack()
@@ -335,7 +335,7 @@ func (h *netMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message
 			Pub:         dPub.UTC(),
 			ExpiresIn:   data.ExpiresIn,
 			NetworkAddr: data.NetworkAddr,
-			Data:        data.Data,
+			Data:        dataBytes,
 			Extension:   data.Extension,
 		}
 		handler := h.mgr.handler
