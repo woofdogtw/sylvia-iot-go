@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-20 02:52:36</td>
+            <td class="headerValue">2023-08-25 12:52:06</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -324,11 +324,11 @@
 <a name="262"><span class="lineNum">     262 </span><span class="lineCov">         27 : func createMqttConnectionEventLoop(c *MqttConnection) chan Status {</span></a>
 <a name="263"><span class="lineNum">     263 </span><span class="lineCov">         27 :         ch := make(chan Status, 1)</span></a>
 <a name="264"><span class="lineNum">     264 </span><span class="lineCov">         27 : </span></a>
-<a name="265"><span class="lineNum">     265 </span><span class="lineCov">         53 :         go func() {</span></a>
-<a name="266"><span class="lineNum">     266 </span><span class="lineCov">        105 :                 for {</span></a>
-<a name="267"><span class="lineNum">     267 </span><span class="lineCov">         79 :                         switch &lt;-ch {</span></a>
-<a name="268"><span class="lineNum">     268 </span><span class="lineCov">         25 :                         case Closed, Closing:</span></a>
-<a name="269"><span class="lineNum">     269 </span><span class="lineCov">         25 :                                 return</span></a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineCov">         54 :         go func() {</span></a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov">        107 :                 for {</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineCov">         80 :                         switch &lt;-ch {</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">         27 :                         case Closed, Closing:</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">         27 :                                 return</span></a>
 <a name="270"><span class="lineNum">     270 </span><span class="lineCov">         27 :                         case Connecting:</span></a>
 <a name="271"><span class="lineNum">     271 </span><span class="lineCov">         27 :                                 c.statusMutex.Lock()</span></a>
 <a name="272"><span class="lineNum">     272 </span><span class="lineCov">         27 :                                 c.status = Connecting</span></a>
