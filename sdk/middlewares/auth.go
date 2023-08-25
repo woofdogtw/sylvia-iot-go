@@ -42,11 +42,11 @@ const (
 func AuthMiddleware(authUri string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
-		split := strings.Split(token, " ")
-		if len(split) != 2 || split[1] == "" {
+		token = strings.TrimSpace(token)
+		if len(token) < 8 || strings.ToLower(token[:7]) != "bearer " {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":    constants.ErrParam.String(),
-				"message": "missing token",
+				"message": "not bearer token",
 			})
 			return
 		}
@@ -59,7 +59,7 @@ func AuthMiddleware(authUri string) func(*gin.Context) {
 			})
 			return
 		}
-		req.Header.Set("Authorization", "Bearer "+split[1])
+		req.Header.Set("Authorization", "Bearer "+token[7:])
 		client := http.Client{}
 		res, err := client.Do(req)
 		if err != nil {
@@ -98,7 +98,7 @@ func AuthMiddleware(authUri string) func(*gin.Context) {
 			return
 		}
 		c.Set(TokenInfoKey, &FullTokenInfo{
-			Token: split[1],
+			Token: token[7:],
 			Info:  tokenInfo.Data,
 		})
 		c.Next()
