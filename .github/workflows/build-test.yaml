@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       rabbitmq:
-        image: rabbitmq:3.12.2-management-alpine
+        image: rabbitmq:3.12.3-management-alpine
         ports:
           - 5671:5671
           - 5672:5672

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.7 - 2023-08-25
+
+### Fixed
+
+- **sdk**: Fix processing token of the auth middleware.
+
 ## 0.0.6 - 2023-08-20
 
 ### Changed
