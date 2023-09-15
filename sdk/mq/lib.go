@@ -230,8 +230,12 @@ func removeConnection(pool *ConnectionPool, hostUri string, count int) error {
 }
 
 // The utility function for creating application/network queue.
-func newDataQueues(conn *counterConnection, opts Options, prefix string,
-	isNetwork bool) (*dataQueues, error) {
+func newDataQueues(
+	conn *counterConnection,
+	opts Options,
+	prefix string,
+	isNetwork bool,
+) (*dataQueues, error) {
 	var uldata gmq.GmqQueue
 	var dldata gmq.GmqQueue
 	var dldataResp gmq.GmqQueue

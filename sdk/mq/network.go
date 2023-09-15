@@ -166,8 +166,12 @@ const (
 var _ gmq.QueueEventHandler = (*netMgrMqEventHandler)(nil)
 var _ gmq.QueueMessageHandler = (*netMgrMqEventHandler)(nil)
 
-func NewNetworkMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
-	handler NetMgrEventHandler) (*NetworkMgr, error) {
+func NewNetworkMgr(
+	connPool *ConnectionPool,
+	hostUri url.URL,
+	opts Options,
+	handler NetMgrEventHandler,
+) (*NetworkMgr, error) {
 	conn, err := getConnection(connPool, hostUri)
 	if err != nil {
 		return nil, err

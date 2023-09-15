@@ -754,8 +754,12 @@ func amqpScenarioDataNack() {
 }
 
 // Create connected (optional) connections/queues for testing connections.
-func createAmqpConnRsc(resources *amqpQueueResources, handler gmq.QueueEventHandler,
-	msgHandler gmq.QueueMessageHandler, connect bool) error {
+func createAmqpConnRsc(
+	resources *amqpQueueResources,
+	handler gmq.QueueEventHandler,
+	msgHandler gmq.QueueMessageHandler,
+	connect bool,
+) error {
 	conn, err := gmq.NewAmqpConnection(gmq.AmqpConnectionOptions{})
 	if err != nil {
 		return err
@@ -794,8 +798,11 @@ func createAmqpConnRsc(resources *amqpQueueResources, handler gmq.QueueEventHand
 }
 
 // Create connected (optional) connections/queues for testing messages.
-func createAmqpMsgRsc(resources *amqpQueueResources, opts gmq.AmqpQueueOptions,
-	receiverCount int) ([]*testQueueRecvMsgHandler, error) {
+func createAmqpMsgRsc(
+	resources *amqpQueueResources,
+	opts gmq.AmqpQueueOptions,
+	receiverCount int,
+) ([]*testQueueRecvMsgHandler, error) {
 	conn, err := gmq.NewAmqpConnection(gmq.AmqpConnectionOptions{})
 	if err != nil {
 		return nil, err

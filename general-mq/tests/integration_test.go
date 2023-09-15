@@ -155,7 +155,10 @@ func getMessage(messages [][]byte, index int) (string, error) {
 }
 
 func (h *testConnConnectHandler) OnStatus(
-	handlerID string, conn gmq.GmqConnection, status gmq.Status) {
+	handlerID string,
+	conn gmq.GmqConnection,
+	status gmq.Status,
+) {
 	if status == gmq.Connected {
 		h.recvConnected = true
 	}
@@ -164,7 +167,10 @@ func (h *testConnConnectHandler) OnStatus(
 func (h *testConnConnectHandler) OnError(handlerID string, conn gmq.GmqConnection, err error) {}
 
 func (h *testConnRemoveHandler) OnStatus(
-	handlerID string, conn gmq.GmqConnection, status gmq.Status) {
+	handlerID string,
+	conn gmq.GmqConnection,
+	status gmq.Status,
+) {
 	if status == gmq.Connected {
 		h.countMutex.Lock()
 		h.connectedCount++
@@ -175,7 +181,10 @@ func (h *testConnRemoveHandler) OnStatus(
 func (h *testConnRemoveHandler) OnError(handlerID string, conn gmq.GmqConnection, err error) {}
 
 func (h *testConnCloseHandler) OnStatus(
-	handlerID string, conn gmq.GmqConnection, status gmq.Status) {
+	handlerID string,
+	conn gmq.GmqConnection,
+	status gmq.Status,
+) {
 	if status == gmq.Closed {
 		h.recvClosed = true
 	}
