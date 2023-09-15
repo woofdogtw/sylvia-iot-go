@@ -128,8 +128,12 @@ const (
 var _ gmq.QueueEventHandler = (*appMgrMqEventHandler)(nil)
 var _ gmq.QueueMessageHandler = (*appMgrMqEventHandler)(nil)
 
-func NewApplicationMgr(connPool *ConnectionPool, hostUri url.URL, opts Options,
-	handler AppMgrEventHandler) (*ApplicationMgr, error) {
+func NewApplicationMgr(
+	connPool *ConnectionPool,
+	hostUri url.URL,
+	opts Options,
+	handler AppMgrEventHandler,
+) (*ApplicationMgr, error) {
 	if opts.UnitID == "" {
 		return nil, errors.New("`UnitID` cannot be empty for application")
 	}

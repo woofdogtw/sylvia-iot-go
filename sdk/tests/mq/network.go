@@ -74,7 +74,11 @@ func (h *netTestHandler) OnDlData(mgr *mq.NetworkMgr, data *mq.NetDlData) error 
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlAddDevice(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlAddDevice) error {
+func (h *netTestHandler) OnCtrlAddDevice(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlAddDevice,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
@@ -88,7 +92,11 @@ func (h *netTestHandler) OnCtrlAddDevice(mgr *mq.NetworkMgr, time time.Time, new
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlAddDeviceBulk(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlAddDeviceBulk) error {
+func (h *netTestHandler) OnCtrlAddDeviceBulk(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlAddDeviceBulk,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
@@ -102,7 +110,11 @@ func (h *netTestHandler) OnCtrlAddDeviceBulk(mgr *mq.NetworkMgr, time time.Time,
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlAddDeviceRange(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlAddDeviceRange) error {
+func (h *netTestHandler) OnCtrlAddDeviceRange(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlAddDeviceRange,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
@@ -116,7 +128,11 @@ func (h *netTestHandler) OnCtrlAddDeviceRange(mgr *mq.NetworkMgr, time time.Time
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlDelDevice(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlDelDevice) error {
+func (h *netTestHandler) OnCtrlDelDevice(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlDelDevice,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
@@ -130,7 +146,11 @@ func (h *netTestHandler) OnCtrlDelDevice(mgr *mq.NetworkMgr, time time.Time, new
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlDelDeviceBulk(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlDelDeviceBulk) error {
+func (h *netTestHandler) OnCtrlDelDeviceBulk(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlDelDeviceBulk,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 
@@ -144,7 +164,11 @@ func (h *netTestHandler) OnCtrlDelDeviceBulk(mgr *mq.NetworkMgr, time time.Time,
 	return nil
 }
 
-func (h *netTestHandler) OnCtrlDelDeviceRange(mgr *mq.NetworkMgr, time time.Time, new *mq.NetCtrlDelDeviceRange) error {
+func (h *netTestHandler) OnCtrlDelDeviceRange(
+	mgr *mq.NetworkMgr,
+	time time.Time,
+	new *mq.NetCtrlDelDeviceRange,
+) error {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
 

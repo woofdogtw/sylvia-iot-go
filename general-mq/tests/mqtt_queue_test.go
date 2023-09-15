@@ -630,8 +630,12 @@ func mqttScenarioDataBestEffort() {
 }
 
 // Create connected (optional) connections/queues for testing connections.
-func createMqttConnRsc(resources *mqttQueueResources, handler gmq.QueueEventHandler,
-	msgHandler gmq.QueueMessageHandler, connect bool) error {
+func createMqttConnRsc(
+	resources *mqttQueueResources,
+	handler gmq.QueueEventHandler,
+	msgHandler gmq.QueueMessageHandler,
+	connect bool,
+) error {
 	conn, err := gmq.NewMqttConnection(gmq.MqttConnectionOptions{})
 	if err != nil {
 		return err
@@ -669,8 +673,11 @@ func createMqttConnRsc(resources *mqttQueueResources, handler gmq.QueueEventHand
 }
 
 // Create connected (optional) connections/queues for testing messages.
-func createMqttMsgRsc(resources *mqttQueueResources, opts gmq.MqttQueueOptions,
-	receiverCount int) ([]*testQueueRecvMsgHandler, error) {
+func createMqttMsgRsc(
+	resources *mqttQueueResources,
+	opts gmq.MqttQueueOptions,
+	receiverCount int,
+) ([]*testQueueRecvMsgHandler, error) {
 	conn, err := gmq.NewMqttConnection(gmq.MqttConnectionOptions{
 		ClientID: fmt.Sprintf("sender-%s", randomString.Generate(8)),
 	})

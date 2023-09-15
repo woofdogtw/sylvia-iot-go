@@ -81,8 +81,11 @@ func NewClient(opts ClientOptions) (*Client, error) {
 //     For example: `/api/v1/user/list?contains=word`, the client will do a request with
 //     `http://coremgr-host/coremgr/api/v1/user/list?contains=word` URL.
 //   - `body` MUST be JSON format.
-func (c *Client) Request(method string, apiPath string,
-	body []byte) (statusCode int, resBody []byte, err error) {
+func (c *Client) Request(
+	method string,
+	apiPath string,
+	body []byte,
+) (statusCode int, resBody []byte, err error) {
 	url := c.coremgrBase + apiPath
 	for retry := 1; ; retry-- {
 		token := c.accessToken
