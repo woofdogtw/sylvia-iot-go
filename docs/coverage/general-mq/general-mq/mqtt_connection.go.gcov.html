@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-08-25 12:52:06</td>
+            <td class="headerValue">2023-09-15 14:10:09</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -291,21 +291,21 @@
 <a name="229"><span class="lineNum">     229 </span>            : </a>
 <a name="230"><span class="lineNum">     230 </span>            : // To add a packet handler for `MqttQueue`. The `name` is the queue name.</a>
 <a name="231"><span class="lineNum">     231 </span>            : func (c *MqttConnection) addPacketHandler(name string, topic string, reliable bool,</a>
-<a name="232"><span class="lineNum">     232 </span><span class="lineCov">         15 :         handler mqttPacketHandler) {</span></a>
-<a name="233"><span class="lineNum">     233 </span><span class="lineCov">         15 :         var qos byte</span></a>
-<a name="234"><span class="lineNum">     234 </span><span class="lineCov">         15 :         if reliable {</span></a>
+<a name="232"><span class="lineNum">     232 </span><span class="lineCov">         16 :         handler mqttPacketHandler) {</span></a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineCov">         16 :         var qos byte</span></a>
+<a name="234"><span class="lineNum">     234 </span><span class="lineCov">         16 :         if reliable {</span></a>
 <a name="235"><span class="lineNum">     235 </span><span class="lineNoCov">          0 :                 qos = 1</span></a>
 <a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :         }</span></a>
-<a name="237"><span class="lineNum">     237 </span><span class="lineCov">         15 :         c.packetHandlersMutex.Lock()</span></a>
-<a name="238"><span class="lineNum">     238 </span><span class="lineCov">         15 :         c.packetHandlers[name] = mqttPacketHandlerItem{</span></a>
-<a name="239"><span class="lineNum">     239 </span><span class="lineCov">         15 :                 handler: handler,</span></a>
-<a name="240"><span class="lineNum">     240 </span><span class="lineCov">         15 :                 topic:   topic,</span></a>
-<a name="241"><span class="lineNum">     241 </span><span class="lineCov">         15 :                 qos:     qos,</span></a>
-<a name="242"><span class="lineNum">     242 </span><span class="lineCov">         15 :         }</span></a>
-<a name="243"><span class="lineNum">     243 </span><span class="lineCov">         15 :         c.packetHandlersMutex.Unlock()</span></a>
-<a name="244"><span class="lineNum">     244 </span><span class="lineCov">         15 : </span></a>
-<a name="245"><span class="lineNum">     245 </span><span class="lineCov">         15 :         token := c.conn.Subscribe(topic, qos, c.mqttMessageHandler)</span></a>
-<a name="246"><span class="lineNum">     246 </span><span class="lineCov">         15 :         _ = token.WaitTimeout(c.opts.reconnect)</span></a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineCov">         16 :         c.packetHandlersMutex.Lock()</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineCov">         16 :         c.packetHandlers[name] = mqttPacketHandlerItem{</span></a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">         16 :                 handler: handler,</span></a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineCov">         16 :                 topic:   topic,</span></a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineCov">         16 :                 qos:     qos,</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineCov">         16 :         }</span></a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov">         16 :         c.packetHandlersMutex.Unlock()</span></a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineCov">         16 : </span></a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">         16 :         token := c.conn.Subscribe(topic, qos, c.mqttMessageHandler)</span></a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineCov">         16 :         _ = token.WaitTimeout(c.opts.reconnect)</span></a>
 <a name="247"><span class="lineNum">     247 </span>            : }</a>
 <a name="248"><span class="lineNum">     248 </span>            : </a>
 <a name="249"><span class="lineNum">     249 </span>            : // To remove a packet handler. The `name` is the queue name.</a>
@@ -315,10 +315,10 @@
 <a name="253"><span class="lineNum">     253 </span><span class="lineCov">         22 :         delete(c.packetHandlers, name)</span></a>
 <a name="254"><span class="lineNum">     254 </span><span class="lineCov">         22 :         c.packetHandlersMutex.Unlock()</span></a>
 <a name="255"><span class="lineNum">     255 </span><span class="lineCov">         22 : </span></a>
-<a name="256"><span class="lineNum">     256 </span><span class="lineCov">         37 :         if item.handler != nil {</span></a>
-<a name="257"><span class="lineNum">     257 </span><span class="lineCov">         15 :                 token := c.conn.Unsubscribe(item.topic)</span></a>
-<a name="258"><span class="lineNum">     258 </span><span class="lineCov">         15 :                 _ = token.WaitTimeout(c.opts.reconnect)</span></a>
-<a name="259"><span class="lineNum">     259 </span><span class="lineCov">         15 :         }</span></a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov">         38 :         if item.handler != nil {</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineCov">         16 :                 token := c.conn.Unsubscribe(item.topic)</span></a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">         16 :                 _ = token.WaitTimeout(c.opts.reconnect)</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">         16 :         }</span></a>
 <a name="260"><span class="lineNum">     260 </span>            : }</a>
 <a name="261"><span class="lineNum">     261 </span>            : </a>
 <a name="262"><span class="lineNum">     262 </span><span class="lineCov">         27 : func createMqttConnectionEventLoop(c *MqttConnection) chan Status {</span></a>
