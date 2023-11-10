@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.8 - 2023-11-10
+
+### Fixed
+
+- Update dependencies and fix vulnerabilities.
+
 ## 0.0.7 - 2023-08-25
 
 ### Fixed
