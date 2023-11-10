@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2023-09-15 14:10:09</td>
+            <td class="headerValue">2023-11-10 11:28:17</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -266,9 +266,9 @@
 <a name="204"><span class="lineNum">     204 </span><span class="lineCov">          2 : }</span></a>
 <a name="205"><span class="lineNum">     205 </span>            : </a>
 <a name="206"><span class="lineNum">     206 </span>            : // Manager status.</a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineCov">       1590 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></a>
-<a name="208"><span class="lineNum">     208 </span><span class="lineCov">       1590 :         return mgr.status</span></a>
-<a name="209"><span class="lineNum">     209 </span><span class="lineCov">       1590 : }</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">       1583 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">       1583 :         return mgr.status</span></a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">       1583 : }</span></a>
 <a name="210"><span class="lineNum">     210 </span>            : </a>
 <a name="211"><span class="lineNum">     211 </span>            : // Detail status of each message queue. Please ignore `Ctrl`.</a>
 <a name="212"><span class="lineNum">     212 </span><span class="lineCov">          2 : func (mgr *ApplicationMgr) MqStatus() DataMqStatus {</span></a>
@@ -417,11 +417,11 @@
 <a name="355"><span class="lineNum">     355 </span><span class="lineCov">        232 :         if h.mgr.uldata.Status() == gmq.Connected &amp;&amp;</span></a>
 <a name="356"><span class="lineNum">     356 </span><span class="lineCov">        232 :                 h.mgr.dldata.Status() == gmq.Connected &amp;&amp;</span></a>
 <a name="357"><span class="lineNum">     357 </span><span class="lineCov">        232 :                 h.mgr.dldataResp.Status() == gmq.Connected &amp;&amp;</span></a>
-<a name="358"><span class="lineNum">     358 </span><span class="lineCov">        251 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></a>
-<a name="359"><span class="lineNum">     359 </span><span class="lineCov">         19 :                 mgrStatus = Ready</span></a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">        250 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineCov">         18 :                 mgrStatus = Ready</span></a>
 <a name="360"><span class="lineNum">     360 </span><span class="lineCov">        232 :         } else {</span></a>
-<a name="361"><span class="lineNum">     361 </span><span class="lineCov">        213 :                 mgrStatus = NotReady</span></a>
-<a name="362"><span class="lineNum">     362 </span><span class="lineCov">        213 :         }</span></a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineCov">        214 :                 mgrStatus = NotReady</span></a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">        214 :         }</span></a>
 <a name="363"><span class="lineNum">     363 </span>            : </a>
 <a name="364"><span class="lineNum">     364 </span><span class="lineCov">        232 :         changed := false</span></a>
 <a name="365"><span class="lineNum">     365 </span><span class="lineCov">        268 :         if h.mgr.status != mgrStatus {</span></a>
