@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       rabbitmq:
-        image: rabbitmq:3.12.3-management-alpine
+        image: rabbitmq:3.12.10-management-alpine
         ports:
           - 5671:5671
           - 5672:5672
           - 15672:15672
       emqx:
-        image: emqx/emqx:5.1.4
+        image: emqx/emqx:5.4.0
         ports:
           - 1883:1883
           - 8883:8883
