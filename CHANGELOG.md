@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0 - 2024-05-17
+
+### Changed
+
+- Update CI tools.
+- Update dependencies and fix vulnerabilities.
+
 ## 0.0.9 - 2023-12-22
 
 ### Fixed
