@@ -1,0 +1,45 @@
+name: Release Sylvia-IoT SDK
+on:
+  push:
+    tags:
+      - v*
+env:
+  GHR_VER: v0.16.2
+  BIN_DIR: dist
+  SBOM_VER: v1.10.0
+  SBOM_DIR: sbom
+jobs:
+  release:
+    name: Publish GitHub Releases
+    runs-on: ubuntu-22.04
+    env:
+      RELEASE_VER: ${{ github.ref_name }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Prepare assets
+        run: |
+          mkdir -p ${BIN_DIR}
+          echo -n ${RELEASE_VER:1} > ${BIN_DIR}/VERSION
+      - name: Prepare SBOM
+        run: |
+          mkdir -p ${SBOM_DIR}
+          curl -kLo syft.tar.gz https://github.com/anchore/syft/releases/download/${SBOM_VER}/syft_${SBOM_VER:1}_linux_amd64.tar.gz
+          tar xf syft.tar.gz
+          git checkout .
+          ./syft general-mq -o spdx-json > ${SBOM_DIR}/general-mq.spdx.json
+          ./syft general-mq -o cyclonedx-json > ${SBOM_DIR}/general-mq.cdx.json
+          ./syft sdk -o spdx-json > ${SBOM_DIR}/sdk.spdx.json
+          ./syft sdk -o cyclonedx-json > ${SBOM_DIR}/sdk.cdx.json
+          tar cf sbom.tar sbom
+          xz -z -9 -e sbom.tar
+          mv sbom.tar.xz ${BIN_DIR}/
+      - name: Create releases, assets and version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -LO https://github.com/tcnksm/ghr/releases/download/${GHR_VER}/ghr_${GHR_VER}_linux_amd64.tar.gz
+          tar xf ghr_${GHR_VER}_linux_amd64.tar.gz
+          ./ghr_${GHR_VER}_linux_amd64/ghr -u "${GITHUB_REPOSITORY%/*}" -r "${GITHUB_REPOSITORY#*/}" "${GITHUB_REF#refs/tags/}" ${BIN_DIR}

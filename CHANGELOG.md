@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.1 - 2024-08-02
+
+### Added
+
+- Add SBOM (SPDX and CycloneDX JSON using `syft`) for Releases. See `sbom.tar.xz` in Releases.
+
+### Changed
+
+- Update dependencies.
+
+### Fixed
+
+- **general-mq**: Fix possible nil pointer access.
+
 ## 0.1.0 - 2024-05-17
 
 ### Changed
