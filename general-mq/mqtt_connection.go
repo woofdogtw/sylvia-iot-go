@@ -368,7 +368,10 @@ func genMqttConnectedHandler(c *MqttConnection) mqtt.OnConnectHandler {
 			topics[item.topic] = item.qos
 		}
 		c.packetHandlersMutex.Unlock()
-		c.conn.SubscribeMultiple(topics, c.mqttMessageHandler)
+		conn := c.conn
+		if conn != nil {
+			conn.SubscribeMultiple(topics, c.mqttMessageHandler)
+		}
 
 		c.evChannel <- Connected
 	}
