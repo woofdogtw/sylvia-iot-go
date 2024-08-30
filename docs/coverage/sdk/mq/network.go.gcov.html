@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-08-02 13:25:41</td>
+            <td class="headerValue">2024-08-30 13:54:22</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -447,8 +447,8 @@
 <a name="385"><span class="lineNum">     385 </span><span class="lineCov">          2 :                                 return</span></a>
 <a name="386"><span class="lineNum">     386 </span><span class="lineCov">          2 :                         }</span></a>
 <a name="387"><span class="lineNum">     387 </span><span class="lineCov">          5 :                         handler := h.mgr.handler</span></a>
-<a name="388"><span class="lineNum">     388 </span><span class="lineCov">          9 :                         if handler != nil {</span></a>
-<a name="389"><span class="lineNum">     389 </span><span class="lineCov">          6 :                                 if err := handler.OnCtrlAddDeviceBulk(h.mgr, dTime.UTC(), &amp;data); err != nil {</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineCov">         10 :                         if handler != nil {</span></a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineCov">          7 :                                 if err := handler.OnCtrlAddDeviceBulk(h.mgr, dTime.UTC(), &amp;data); err != nil {</span></a>
 <a name="390"><span class="lineNum">     390 </span><span class="lineCov">          2 :                                         _ = message.Nack()</span></a>
 <a name="391"><span class="lineNum">     391 </span><span class="lineCov">          5 :                                 } else {</span></a>
 <a name="392"><span class="lineNum">     392 </span><span class="lineCov">          3 :                                         _ = message.Ack()</span></a>
