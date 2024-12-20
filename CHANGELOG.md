@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3 - 2024-12-20
+
+### Changed
+
+- Update dependencies and fix vulnerabilities.
+
 ## 0.1.2 - 2024-08-30
 
 ### Changed
