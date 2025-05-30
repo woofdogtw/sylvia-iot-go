@@ -4,14 +4,14 @@ on:
     tags:
       - v*
 env:
-  GHR_VER: v0.16.2
+  GHR_VER: v0.17.0
   BIN_DIR: dist
-  SBOM_VER: v1.10.0
+  SBOM_VER: v1.26.1
   SBOM_DIR: sbom
 jobs:
   release:
     name: Publish GitHub Releases
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       RELEASE_VER: ${{ github.ref_name }}
     steps:
