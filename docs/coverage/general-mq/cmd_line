@@ -1,0 +1,1 @@
+genhtml ./general-mq.lcov -o ./coverage/general-mq

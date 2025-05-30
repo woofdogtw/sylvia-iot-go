@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - general-mq.lcov - general-mq/general-mq/queue.go</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">general-mq/general-mq</a> - queue.go<span style="font-size: 80%;"> (source / <a href="queue.go.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">general-mq.lcov</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">71.4&nbsp;%</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">5</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-05-30 08:52:50</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : package gmq</span>
+<span id="L2"><span class="lineNum">       2</span>              : </span>
+<span id="L3"><span class="lineNum">       3</span>              : import (</span>
+<span id="L4"><span class="lineNum">       4</span>              :         &quot;github.com/dlclark/regexp2&quot;</span>
+<span id="L5"><span class="lineNum">       5</span>              : )</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : // The event handler for queues.</span>
+<span id="L8"><span class="lineNum">       8</span>              : type QueueEventHandler interface {</span>
+<span id="L9"><span class="lineNum">       9</span>              :         // Triggered by `ConnectionStatus`.</span>
+<span id="L10"><span class="lineNum">      10</span>              :         OnStatus(queue GmqQueue, status Status)</span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              :         // Triggered when there are errors.</span>
+<span id="L13"><span class="lineNum">      13</span>              :         OnError(queue GmqQueue, err error)</span>
+<span id="L14"><span class="lineNum">      14</span>              : }</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              : // The message handler for queues.</span>
+<span id="L17"><span class="lineNum">      17</span>              : type QueueMessageHandler interface {</span>
+<span id="L18"><span class="lineNum">      18</span>              :         // Triggered for new incoming `Message`s.</span>
+<span id="L19"><span class="lineNum">      19</span>              :         OnMessage(queue GmqQueue, message Message)</span>
+<span id="L20"><span class="lineNum">      20</span>              : }</span>
+<span id="L21"><span class="lineNum">      21</span>              : </span>
+<span id="L22"><span class="lineNum">      22</span>              : // The operations for queues.</span>
+<span id="L23"><span class="lineNum">      23</span>              : type GmqQueue interface {</span>
+<span id="L24"><span class="lineNum">      24</span>              :         // To get the queue name.</span>
+<span id="L25"><span class="lineNum">      25</span>              :         Name() string</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span>              :         // Is the queue a receiver.</span>
+<span id="L28"><span class="lineNum">      28</span>              :         IsRecv() bool</span>
+<span id="L29"><span class="lineNum">      29</span>              : </span>
+<span id="L30"><span class="lineNum">      30</span>              :         // To get the connection status.</span>
+<span id="L31"><span class="lineNum">      31</span>              :         Status() Status</span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span>              :         // To set the queue event handler. Use `nil` to remove the handler.</span>
+<span id="L34"><span class="lineNum">      34</span>              :         SetHandler(handler QueueEventHandler)</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              :         // To set the queue message handler.</span>
+<span id="L37"><span class="lineNum">      37</span>              :         SetMsgHandler(handler QueueMessageHandler) error</span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              :         // To connect to the message queue. The `GmqQueue` will connect to the queue using a go-routine</span>
+<span id="L40"><span class="lineNum">      40</span>              :         // report status with `Status`.</span>
+<span id="L41"><span class="lineNum">      41</span>              :         //</span>
+<span id="L42"><span class="lineNum">      42</span>              :         // `Note` You MUST call `SetMsgHandler()` before `connect()`.</span>
+<span id="L43"><span class="lineNum">      43</span>              :         Connect() error</span>
+<span id="L44"><span class="lineNum">      44</span>              : </span>
+<span id="L45"><span class="lineNum">      45</span>              :         // To close the connection.</span>
+<span id="L46"><span class="lineNum">      46</span>              :         Close() error</span>
+<span id="L47"><span class="lineNum">      47</span>              : </span>
+<span id="L48"><span class="lineNum">      48</span>              :         // To send a message (for senders only).</span>
+<span id="L49"><span class="lineNum">      49</span>              :         SendMsg(payload []byte) error</span>
+<span id="L50"><span class="lineNum">      50</span>              : }</span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span>              : // The operations for incoming messages.</span>
+<span id="L53"><span class="lineNum">      53</span>              : type Message interface {</span>
+<span id="L54"><span class="lineNum">      54</span>              :         // To get the payload.</span>
+<span id="L55"><span class="lineNum">      55</span>              :         Payload() []byte</span>
+<span id="L56"><span class="lineNum">      56</span>              : </span>
+<span id="L57"><span class="lineNum">      57</span>              :         // Use this if the message is processed successfully.</span>
+<span id="L58"><span class="lineNum">      58</span>              :         Ack() error</span>
+<span id="L59"><span class="lineNum">      59</span>              : </span>
+<span id="L60"><span class="lineNum">      60</span>              :         // To requeue the message and the broker will send the message in the future.</span>
+<span id="L61"><span class="lineNum">      61</span>              :         //</span>
+<span id="L62"><span class="lineNum">      62</span>              :         // `Note`: only AMQP or protocols that support requeuing are effective.</span>
+<span id="L63"><span class="lineNum">      63</span>              :         Nack() error</span>
+<span id="L64"><span class="lineNum">      64</span>              : }</span>
+<span id="L65"><span class="lineNum">      65</span>              : </span>
+<span id="L66"><span class="lineNum">      66</span>              : const (</span>
+<span id="L67"><span class="lineNum">      67</span>              :         // The accepted pattern of the queue name.</span>
+<span id="L68"><span class="lineNum">      68</span>              :         queueNamePattern = &quot;^[a-z0-9_-]+([\\.]{1}[a-z0-9_-]+)*$&quot;</span>
+<span id="L69"><span class="lineNum">      69</span>              : )</span>
+<span id="L70"><span class="lineNum">      70</span>              : </span>
+<span id="L71"><span class="lineNum">      71</span>              : // To validate the queue name.</span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC tlaBgGNC">          61 : func nameValidate(name string) bool {</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">          61 :         regexp, err := regexp2.Compile(queueNamePattern, regexp2.None)</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">          61 :         if err != nil || regexp == nil {</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaUNC tlaBgUNC">           0 :                 return false</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaUNC">           0 :         }</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC tlaBgGNC">          61 :         match, _ := regexp.MatchString(name)</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          61 :         return match</span></span>
+<span id="L79"><span class="lineNum">      79</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
