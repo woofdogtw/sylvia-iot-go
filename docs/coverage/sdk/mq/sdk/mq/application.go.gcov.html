@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-05-30 08:52:50</td>
+            <td class="headerValue">2025-06-30 11:34:45</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -266,9 +266,9 @@
 <span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">           2 : }</span></span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
 <span id="L206"><span class="lineNum">     206</span>              : // Manager status.</span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">        1591 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1591 :         return mgr.status</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1591 : }</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">        1592 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1592 :         return mgr.status</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1592 : }</span></span>
 <span id="L210"><span class="lineNum">     210</span>              : </span>
 <span id="L211"><span class="lineNum">     211</span>              : // Detail status of each message queue. Please ignore `Ctrl`.</span>
 <span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">           2 : func (mgr *ApplicationMgr) MqStatus() DataMqStatus {</span></span>
@@ -351,8 +351,8 @@
 <span id="L289"><span class="lineNum">     289</span> <span class="tlaGNC">           2 :                         _ = message.Ack()</span></span>
 <span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC">           2 :                         return</span></span>
 <span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">           2 :                 }</span></span>
-<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           9 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></span>
-<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          11 :                 if err != nil {</span></span>
+<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           8 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          10 :                 if err != nil {</span></span>
 <span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC">           2 :                         _ = message.Ack()</span></span>
 <span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">           2 :                         return</span></span>
 <span id="L296"><span class="lineNum">     296</span> <span class="tlaGNC">           2 :                 }</span></span>
@@ -417,11 +417,11 @@
 <span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         232 :         if h.mgr.uldata.Status() == gmq.Connected &amp;&amp;</span></span>
 <span id="L356"><span class="lineNum">     356</span> <span class="tlaGNC">         232 :                 h.mgr.dldata.Status() == gmq.Connected &amp;&amp;</span></span>
 <span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         232 :                 h.mgr.dldataResp.Status() == gmq.Connected &amp;&amp;</span></span>
-<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">         252 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></span>
-<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">          20 :                 mgrStatus = Ready</span></span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">         250 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">          18 :                 mgrStatus = Ready</span></span>
 <span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC">         232 :         } else {</span></span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">         212 :                 mgrStatus = NotReady</span></span>
-<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">         212 :         }</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">         214 :                 mgrStatus = NotReady</span></span>
+<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">         214 :         }</span></span>
 <span id="L363"><span class="lineNum">     363</span>              : </span>
 <span id="L364"><span class="lineNum">     364</span> <span class="tlaGNC">         232 :         changed := false</span></span>
 <span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">         268 :         if h.mgr.status != mgrStatus {</span></span>
