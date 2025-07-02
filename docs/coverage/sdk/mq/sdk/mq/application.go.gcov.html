@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-06-30 11:34:45</td>
+            <td class="headerValue">2025-07-02 14:22:38</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -266,9 +266,9 @@
 <span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">           2 : }</span></span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
 <span id="L206"><span class="lineNum">     206</span>              : // Manager status.</span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">        1592 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1592 :         return mgr.status</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1592 : }</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">        1590 : func (mgr *ApplicationMgr) Status() MgrStatus {</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1590 :         return mgr.status</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1590 : }</span></span>
 <span id="L210"><span class="lineNum">     210</span>              : </span>
 <span id="L211"><span class="lineNum">     211</span>              : // Detail status of each message queue. Please ignore `Ctrl`.</span>
 <span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">           2 : func (mgr *ApplicationMgr) MqStatus() DataMqStatus {</span></span>
@@ -351,8 +351,8 @@
 <span id="L289"><span class="lineNum">     289</span> <span class="tlaGNC">           2 :                         _ = message.Ack()</span></span>
 <span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC">           2 :                         return</span></span>
 <span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">           2 :                 }</span></span>
-<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           8 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></span>
-<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          10 :                 if err != nil {</span></span>
+<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           9 :                 dPub, err := time.Parse(constants.TimeFormat, data.Pub)</span></span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          11 :                 if err != nil {</span></span>
 <span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC">           2 :                         _ = message.Ack()</span></span>
 <span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">           2 :                         return</span></span>
 <span id="L296"><span class="lineNum">     296</span> <span class="tlaGNC">           2 :                 }</span></span>
@@ -411,7 +411,7 @@
 <span id="L349"><span class="lineNum">     349</span> <span class="tlaUNC tlaBgUNC">           0 :         _ = message.Ack()</span></span>
 <span id="L350"><span class="lineNum">     350</span>              : }</span>
 <span id="L351"><span class="lineNum">     351</span>              : </span>
-<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC tlaBgGNC">         232 : func (h *appMgrMqEventHandler) onEvent(queue gmq.GmqQueue) {</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC tlaBgGNC">         232 : func (h *appMgrMqEventHandler) onEvent(_ gmq.GmqQueue) {</span></span>
 <span id="L353"><span class="lineNum">     353</span> <span class="tlaGNC">         232 :         h.mgr.statusMutex.Lock()</span></span>
 <span id="L354"><span class="lineNum">     354</span> <span class="tlaGNC">         232 :         var mgrStatus MgrStatus</span></span>
 <span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         232 :         if h.mgr.uldata.Status() == gmq.Connected &amp;&amp;</span></span>

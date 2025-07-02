@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-06-30 11:34:45</td>
+            <td class="headerValue">2025-07-02 14:22:37</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -278,7 +278,7 @@
 <span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          27 :         c.statusMutex.Unlock()</span></span>
 <span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          27 : </span></span>
 <span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          30 :         for id, handler := range c.handlers {</span></span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           3 :                 handler.OnStatus(id, c, Closed)</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           3 :                 go handler.OnStatus(id, c, Closed)</span></span>
 <span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">           3 :         }</span></span>
 <span id="L221"><span class="lineNum">     221</span>              : </span>
 <span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC">          27 :         return nil</span></span>
@@ -335,7 +335,7 @@
 <span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          27 :                                 c.statusMutex.Unlock()</span></span>
 <span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          27 : </span></span>
 <span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          30 :                                 for id, handler := range c.handlers {</span></span>
-<span id="L276"><span class="lineNum">     276</span> <span class="tlaGNC">           3 :                                         handler.OnStatus(id, c, Connecting)</span></span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaGNC">           3 :                                         go handler.OnStatus(id, c, Connecting)</span></span>
 <span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">           3 :                                 }</span></span>
 <span id="L278"><span class="lineNum">     278</span>              : </span>
 <span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">          27 :                                 if c.conn != nil {</span></span>
@@ -362,7 +362,7 @@
 <span id="L300"><span class="lineNum">     300</span> <span class="tlaGNC">          26 :                                 c.statusMutex.Unlock()</span></span>
 <span id="L301"><span class="lineNum">     301</span> <span class="tlaGNC">          26 : </span></span>
 <span id="L302"><span class="lineNum">     302</span> <span class="tlaGNC">          29 :                                 for id, handler := range c.handlers {</span></span>
-<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">           3 :                                         handler.OnStatus(id, c, Connected)</span></span>
+<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">           3 :                                         go handler.OnStatus(id, c, Connected)</span></span>
 <span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">           3 :                                 }</span></span>
 <span id="L305"><span class="lineNum">     305</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Disconnected:</span></span>
 <span id="L306"><span class="lineNum">     306</span> <span class="tlaUNC">           0 :                                 c.statusMutex.Lock()</span></span>
@@ -446,7 +446,7 @@
 <span id="L384"><span class="lineNum">     384</span> <span class="tlaUNC">           0 :                 c.statusMutex.Unlock()</span></span>
 <span id="L385"><span class="lineNum">     385</span> <span class="tlaUNC">           0 : </span></span>
 <span id="L386"><span class="lineNum">     386</span> <span class="tlaUNC">           0 :                 for id, handler := range c.handlers {</span></span>
-<span id="L387"><span class="lineNum">     387</span> <span class="tlaUNC">           0 :                         handler.OnStatus(id, c, Connecting)</span></span>
+<span id="L387"><span class="lineNum">     387</span> <span class="tlaUNC">           0 :                         go handler.OnStatus(id, c, Connecting)</span></span>
 <span id="L388"><span class="lineNum">     388</span> <span class="tlaUNC">           0 :                 }</span></span>
 <span id="L389"><span class="lineNum">     389</span> <span class="tlaUNC">           0 :                 c.evChannel &lt;- Connecting</span></span>
 <span id="L390"><span class="lineNum">     390</span>              :         }</span>
@@ -462,7 +462,7 @@
 <span id="L400"><span class="lineNum">     400</span> <span class="tlaGNC">          17 :                 c.packetHandlersMutex.Unlock()</span></span>
 <span id="L401"><span class="lineNum">     401</span> <span class="tlaGNC">          17 : </span></span>
 <span id="L402"><span class="lineNum">     402</span> <span class="tlaGNC">          34 :                 if item.handler != nil {</span></span>
-<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC">          17 :                         item.handler.OnPublish(msg)</span></span>
+<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC">          17 :                         go item.handler.OnPublish(msg)</span></span>
 <span id="L404"><span class="lineNum">     404</span> <span class="tlaGNC">          17 :                 }</span></span>
 <span id="L405"><span class="lineNum">     405</span>              :         }</span>
 <span id="L406"><span class="lineNum">     406</span>              : }</span>

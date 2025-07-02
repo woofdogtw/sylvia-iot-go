@@ -31,13 +31,13 @@
             <td class="headerValue">general-mq.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">79.5&nbsp;%</td>
-            <td class="headerCovTableEntry">263</td>
-            <td class="headerCovTableEntry">209</td>
+            <td class="headerCovTableEntryMed">79.7&nbsp;%</td>
+            <td class="headerCovTableEntry">261</td>
+            <td class="headerCovTableEntry">208</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-06-30 11:34:45</td>
+            <td class="headerValue">2025-07-02 14:22:37</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -218,7 +218,7 @@
 <span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          30 : </span></span>
 <span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          30 :         handler := q.handler</span></span>
 <span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          49 :         if handler != nil {</span></span>
-<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          19 :                 handler.OnStatus(q, Closed)</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          19 :                 go handler.OnStatus(q, Closed)</span></span>
 <span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          19 :         }</span></span>
 <span id="L161"><span class="lineNum">     161</span>              : </span>
 <span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">          30 :         return err</span></span>
@@ -258,203 +258,199 @@
 <span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">           1 : func (q *AmqpQueue) onError(err error) {</span></span>
 <span id="L197"><span class="lineNum">     197</span> <span class="tlaGNC">           1 :         handler := q.handler</span></span>
 <span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">           1 :         if handler != nil {</span></span>
-<span id="L199"><span class="lineNum">     199</span> <span class="tlaUNC tlaBgUNC">           0 :                 go func() {</span></span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaUNC">           0 :                         handler.OnError(q, err)</span></span>
-<span id="L201"><span class="lineNum">     201</span> <span class="tlaUNC">           0 :                 }()</span></span>
-<span id="L202"><span class="lineNum">     202</span>              :         }</span>
-<span id="L203"><span class="lineNum">     203</span>              : }</span>
-<span id="L204"><span class="lineNum">     204</span>              : </span>
-<span id="L205"><span class="lineNum">     205</span>              : // Set message consumer.</span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC tlaBgGNC">          21 : func (q *AmqpQueue) setConsumer(deliveryChannel &lt;-chan amqp.Delivery) {</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          42 :         go func() {</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          86 :                 for delivery := range deliveryChannel {</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          65 :                         channel := q.channel</span></span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">          65 :                         if channel == nil {</span></span>
-<span id="L211"><span class="lineNum">     211</span> <span class="tlaUNC tlaBgUNC">           0 :                                 return</span></span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaUNC">           0 :                         }</span></span>
-<span id="L213"><span class="lineNum">     213</span>              : </span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC tlaBgGNC">          65 :                         handler := q.msgHandler</span></span>
-<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">         130 :                         if handler != nil {</span></span>
-<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          65 :                                 msg := &amp;amqpMessage{</span></span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          65 :                                         channel:  channel,</span></span>
-<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          65 :                                         delivery: delivery.DeliveryTag,</span></span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          65 :                                         content:  delivery.Body,</span></span>
-<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          65 :                                 }</span></span>
-<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">         130 :                                 go func() {</span></span>
-<span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC">          65 :                                         handler.OnMessage(q, msg)</span></span>
-<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">          65 :                                 }()</span></span>
-<span id="L224"><span class="lineNum">     224</span>              :                         }</span>
-<span id="L225"><span class="lineNum">     225</span>              :                 }</span>
-<span id="L226"><span class="lineNum">     226</span>              :         }()</span>
-<span id="L227"><span class="lineNum">     227</span>              : }</span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaUNC tlaBgUNC">           0 :                 go handler.OnError(q, err)</span></span>
+<span id="L200"><span class="lineNum">     200</span> <span class="tlaUNC">           0 :         }</span></span>
+<span id="L201"><span class="lineNum">     201</span>              : }</span>
+<span id="L202"><span class="lineNum">     202</span>              : </span>
+<span id="L203"><span class="lineNum">     203</span>              : // Set message consumer.</span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC tlaBgGNC">          21 : func (q *AmqpQueue) setConsumer(deliveryChannel &lt;-chan amqp.Delivery) {</span></span>
+<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          42 :         go func() {</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          88 :                 for delivery := range deliveryChannel {</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          67 :                         channel := q.channel</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          67 :                         if channel == nil {</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaUNC tlaBgUNC">           0 :                                 return</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaUNC">           0 :                         }</span></span>
+<span id="L211"><span class="lineNum">     211</span>              : </span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC tlaBgGNC">          67 :                         handler := q.msgHandler</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">         134 :                         if handler != nil {</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          67 :                                 msg := &amp;amqpMessage{</span></span>
+<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">          67 :                                         channel:  channel,</span></span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          67 :                                         delivery: delivery.DeliveryTag,</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          67 :                                         content:  delivery.Body,</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          67 :                                 }</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          67 :                                 go handler.OnMessage(q, msg)</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          67 :                         }</span></span>
+<span id="L221"><span class="lineNum">     221</span>              :                 }</span>
+<span id="L222"><span class="lineNum">     222</span>              :         }()</span>
+<span id="L223"><span class="lineNum">     223</span>              : }</span>
+<span id="L224"><span class="lineNum">     224</span>              : </span>
+<span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">          67 : func (m *amqpMessage) Payload() []byte {</span></span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">          67 :         return m.content</span></span>
+<span id="L227"><span class="lineNum">     227</span> <span class="tlaGNC">          67 : }</span></span>
 <span id="L228"><span class="lineNum">     228</span>              : </span>
-<span id="L229"><span class="lineNum">     229</span> <span class="tlaGNC">          65 : func (m *amqpMessage) Payload() []byte {</span></span>
-<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">          65 :         return m.content</span></span>
-<span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">          65 : }</span></span>
+<span id="L229"><span class="lineNum">     229</span> <span class="tlaGNC">          23 : func (m *amqpMessage) Ack() error {</span></span>
+<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">          23 :         return m.channel.Ack(m.delivery, false)</span></span>
+<span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">          23 : }</span></span>
 <span id="L232"><span class="lineNum">     232</span>              : </span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          23 : func (m *amqpMessage) Ack() error {</span></span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          23 :         return m.channel.Ack(m.delivery, false)</span></span>
-<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          23 : }</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          44 : func (m *amqpMessage) Nack() error {</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          44 :         return m.channel.Nack(m.delivery, false, true)</span></span>
+<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          44 : }</span></span>
 <span id="L236"><span class="lineNum">     236</span>              : </span>
-<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          42 : func (m *amqpMessage) Nack() error {</span></span>
-<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">          42 :         return m.channel.Nack(m.delivery, false, true)</span></span>
-<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          42 : }</span></span>
-<span id="L240"><span class="lineNum">     240</span>              : </span>
-<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          30 : func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {</span></span>
-<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          30 :         ch := make(chan Status, 1)</span></span>
-<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">          30 : </span></span>
-<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          60 :         go func() {</span></span>
-<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">          30 :                 var queueChannnel chan *amqp.Error</span></span>
-<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">         117 :                 for {</span></span>
-<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          87 :                         switch &lt;-ch {</span></span>
-<span id="L248"><span class="lineNum">     248</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Closed, Closing:</span></span>
-<span id="L249"><span class="lineNum">     249</span> <span class="tlaUNC">           0 :                                 return</span></span>
-<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC tlaBgGNC">          58 :                         case Connecting:</span></span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          86 :                                 if q.connStatus() != Connected {</span></span>
-<span id="L252"><span class="lineNum">     252</span> <span class="tlaGNC">          28 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          28 :                                         ch &lt;- Connecting</span></span>
-<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">          28 :                                         continue</span></span>
-<span id="L255"><span class="lineNum">     255</span>              :                                 }</span>
-<span id="L256"><span class="lineNum">     256</span>              : </span>
-<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">          30 :                                 rawConn := q.conn.getRawConnection()</span></span>
-<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">          30 :                                 if rawConn == nil {</span></span>
-<span id="L259"><span class="lineNum">     259</span> <span class="tlaUNC tlaBgUNC">           0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaUNC">           0 :                                         ch &lt;- Connecting</span></span>
-<span id="L261"><span class="lineNum">     261</span> <span class="tlaUNC">           0 :                                         continue</span></span>
-<span id="L262"><span class="lineNum">     262</span>              :                                 }</span>
-<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC tlaBgGNC">          30 :                                 channel, err := rawConn.Channel()</span></span>
-<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          30 :                                 if err != nil {</span></span>
-<span id="L265"><span class="lineNum">     265</span> <span class="tlaUNC tlaBgUNC">           0 :                                         q.onError(err)</span></span>
-<span id="L266"><span class="lineNum">     266</span> <span class="tlaUNC">           0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L267"><span class="lineNum">     267</span> <span class="tlaUNC">           0 :                                         ch &lt;- Connecting</span></span>
-<span id="L268"><span class="lineNum">     268</span> <span class="tlaUNC">           0 :                                         continue</span></span>
-<span id="L269"><span class="lineNum">     269</span>              :                                 }</span>
-<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC tlaBgGNC">          38 :                                 if q.opts.Reliable {</span></span>
-<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">           8 :                                         if err := channel.Confirm(false); err != nil {</span></span>
-<span id="L272"><span class="lineNum">     272</span> <span class="tlaUNC tlaBgUNC">           0 :                                                 q.onError(err)</span></span>
-<span id="L273"><span class="lineNum">     273</span> <span class="tlaUNC">           0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L274"><span class="lineNum">     274</span> <span class="tlaUNC">           0 :                                                 ch &lt;- Connecting</span></span>
-<span id="L275"><span class="lineNum">     275</span> <span class="tlaUNC">           0 :                                                 continue</span></span>
-<span id="L276"><span class="lineNum">     276</span>              :                                         }</span>
-<span id="L277"><span class="lineNum">     277</span>              :                                 }</span>
-<span id="L278"><span class="lineNum">     278</span>              : </span>
-<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC tlaBgGNC">          30 :                                 name := q.opts.Name</span></span>
-<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          36 :                                 if q.opts.Broadcast {</span></span>
-<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">           6 :                                         err := channel.ExchangeDeclare(name, amqp.ExchangeFanout, false, false, false,</span></span>
-<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">           6 :                                                 false, nil)</span></span>
-<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">           6 :                                         if err != nil {</span></span>
-<span id="L284"><span class="lineNum">     284</span> <span class="tlaUNC tlaBgUNC">           0 :                                                 q.onError(err)</span></span>
-<span id="L285"><span class="lineNum">     285</span> <span class="tlaUNC">           0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L286"><span class="lineNum">     286</span> <span class="tlaUNC">           0 :                                                 ch &lt;- Connecting</span></span>
-<span id="L287"><span class="lineNum">     287</span> <span class="tlaUNC">           0 :                                                 continue</span></span>
-<span id="L288"><span class="lineNum">     288</span>              :                                         }</span>
-<span id="L289"><span class="lineNum">     289</span>              : </span>
-<span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC tlaBgGNC">          10 :                                         if q.opts.IsRecv {</span></span>
-<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">           4 :                                                 queue, err := channel.QueueDeclare(&quot;&quot;, false, false, true, false, nil)</span></span>
-<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
-<span id="L293"><span class="lineNum">     293</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L294"><span class="lineNum">     294</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L295"><span class="lineNum">     295</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L296"><span class="lineNum">     296</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L297"><span class="lineNum">     297</span>              :                                                 }</span>
-<span id="L298"><span class="lineNum">     298</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 err = channel.QueueBind(queue.Name, &quot;&quot;, name, false, nil)</span></span>
-<span id="L299"><span class="lineNum">     299</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
-<span id="L300"><span class="lineNum">     300</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L301"><span class="lineNum">     301</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L302"><span class="lineNum">     302</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L303"><span class="lineNum">     303</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L304"><span class="lineNum">     304</span>              :                                                 }</span>
-<span id="L305"><span class="lineNum">     305</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></span>
-<span id="L306"><span class="lineNum">     306</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
-<span id="L307"><span class="lineNum">     307</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L308"><span class="lineNum">     308</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L309"><span class="lineNum">     309</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L310"><span class="lineNum">     310</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L311"><span class="lineNum">     311</span>              :                                                 }</span>
-<span id="L312"><span class="lineNum">     312</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 deliveryChannel, err :=</span></span>
-<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">           4 :                                                         channel.Consume(queue.Name, &quot;&quot;, false, false, false, false, nil)</span></span>
-<span id="L314"><span class="lineNum">     314</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
-<span id="L315"><span class="lineNum">     315</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L316"><span class="lineNum">     316</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L317"><span class="lineNum">     317</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L318"><span class="lineNum">     318</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L319"><span class="lineNum">     319</span>              :                                                 }</span>
-<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 q.setConsumer(deliveryChannel)</span></span>
-<span id="L321"><span class="lineNum">     321</span>              :                                         }</span>
-<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">          24 :                                 } else {</span></span>
-<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">          24 :                                         _, err = channel.QueueDeclare(name, true, false, false, false, nil)</span></span>
-<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          25 :                                         if err != nil {</span></span>
-<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">           1 :                                                 q.onError(err)</span></span>
-<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">           1 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">           1 :                                                 ch &lt;- Connecting</span></span>
-<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">           1 :                                                 continue</span></span>
-<span id="L329"><span class="lineNum">     329</span>              :                                         }</span>
-<span id="L330"><span class="lineNum">     330</span>              : </span>
-<span id="L331"><span class="lineNum">     331</span> <span class="tlaGNC">          40 :                                         if q.opts.IsRecv {</span></span>
-<span id="L332"><span class="lineNum">     332</span> <span class="tlaGNC">          17 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></span>
-<span id="L333"><span class="lineNum">     333</span> <span class="tlaGNC">          17 :                                                 if err != nil {</span></span>
-<span id="L334"><span class="lineNum">     334</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L335"><span class="lineNum">     335</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L336"><span class="lineNum">     336</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L337"><span class="lineNum">     337</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L338"><span class="lineNum">     338</span>              :                                                 }</span>
-<span id="L339"><span class="lineNum">     339</span> <span class="tlaGNC tlaBgGNC">          17 :                                                 deliveryChannel, err :=</span></span>
-<span id="L340"><span class="lineNum">     340</span> <span class="tlaGNC">          17 :                                                         channel.Consume(name, &quot;&quot;, false, false, false, false, nil)</span></span>
-<span id="L341"><span class="lineNum">     341</span> <span class="tlaGNC">          17 :                                                 if err != nil {</span></span>
-<span id="L342"><span class="lineNum">     342</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
-<span id="L343"><span class="lineNum">     343</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
-<span id="L344"><span class="lineNum">     344</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
-<span id="L345"><span class="lineNum">     345</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
-<span id="L346"><span class="lineNum">     346</span>              :                                                 }</span>
-<span id="L347"><span class="lineNum">     347</span> <span class="tlaGNC tlaBgGNC">          17 :                                                 q.setConsumer(deliveryChannel)</span></span>
-<span id="L348"><span class="lineNum">     348</span>              :                                         }</span>
-<span id="L349"><span class="lineNum">     349</span>              :                                 }</span>
-<span id="L350"><span class="lineNum">     350</span>              : </span>
-<span id="L351"><span class="lineNum">     351</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Lock()</span></span>
-<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">          29 :                                 if q.status == Closed || q.status == Closing {</span></span>
-<span id="L353"><span class="lineNum">     353</span> <span class="tlaUNC tlaBgUNC">           0 :                                         q.statusMutex.Unlock()</span></span>
-<span id="L354"><span class="lineNum">     354</span> <span class="tlaUNC">           0 :                                         return</span></span>
-<span id="L355"><span class="lineNum">     355</span> <span class="tlaUNC">           0 :                                 }</span></span>
-<span id="L356"><span class="lineNum">     356</span>              : </span>
-<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC tlaBgGNC">          29 :                                 q.channel = channel</span></span>
-<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">          29 :                                 q.status = Connected</span></span>
-<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Unlock()</span></span>
-<span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC">          29 : </span></span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          29 :                                 queueChannnel = channel.NotifyClose(make(chan *amqp.Error, 1))</span></span>
-<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">          29 : </span></span>
-<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">          29 :                                 handler := q.handler</span></span>
-<span id="L364"><span class="lineNum">     364</span> <span class="tlaGNC">          49 :                                 if handler != nil {</span></span>
-<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">          20 :                                         handler.OnStatus(q, Connected)</span></span>
-<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">          20 :                                 }</span></span>
-<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">          29 :                                 ch &lt;- Connected</span></span>
-<span id="L368"><span class="lineNum">     368</span> <span class="tlaGNC">          29 :                         case Connected:</span></span>
-<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">          29 :                                 &lt;-queueChannnel</span></span>
-<span id="L370"><span class="lineNum">     370</span> <span class="tlaGNC">          29 :                                 var channel *amqp.Channel</span></span>
-<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Lock()</span></span>
-<span id="L372"><span class="lineNum">     372</span> <span class="tlaGNC">          29 :                                 q.status = Connecting</span></span>
-<span id="L373"><span class="lineNum">     373</span> <span class="tlaGNC">          29 :                                 channel = q.channel</span></span>
-<span id="L374"><span class="lineNum">     374</span> <span class="tlaGNC">          29 :                                 q.channel = nil</span></span>
-<span id="L375"><span class="lineNum">     375</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Unlock()</span></span>
-<span id="L376"><span class="lineNum">     376</span> <span class="tlaGNC">          29 : </span></span>
-<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">          29 :                                 handler := q.handler</span></span>
-<span id="L378"><span class="lineNum">     378</span> <span class="tlaGNC">          49 :                                 if handler != nil {</span></span>
-<span id="L379"><span class="lineNum">     379</span> <span class="tlaGNC">          20 :                                         handler.OnStatus(q, Connecting)</span></span>
-<span id="L380"><span class="lineNum">     380</span> <span class="tlaGNC">          20 :                                 }</span></span>
-<span id="L381"><span class="lineNum">     381</span> <span class="tlaGNC">          30 :                                 if channel != nil {</span></span>
-<span id="L382"><span class="lineNum">     382</span> <span class="tlaGNC">           1 :                                         _ = channel.Close()</span></span>
-<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">           1 :                                 }</span></span>
-<span id="L384"><span class="lineNum">     384</span> <span class="tlaGNC">          29 :                                 ch &lt;- Connecting</span></span>
-<span id="L385"><span class="lineNum">     385</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Disconnected:</span></span>
-<span id="L386"><span class="lineNum">     386</span> <span class="tlaUNC">           0 :                                 q.statusMutex.Lock()</span></span>
-<span id="L387"><span class="lineNum">     387</span> <span class="tlaUNC">           0 :                                 q.status = Connecting</span></span>
-<span id="L388"><span class="lineNum">     388</span> <span class="tlaUNC">           0 :                                 q.statusMutex.Unlock()</span></span>
-<span id="L389"><span class="lineNum">     389</span> <span class="tlaUNC">           0 :                                 ch &lt;- Connecting</span></span>
-<span id="L390"><span class="lineNum">     390</span>              :                         }</span>
-<span id="L391"><span class="lineNum">     391</span>              :                 }</span>
-<span id="L392"><span class="lineNum">     392</span>              :         }()</span>
-<span id="L393"><span class="lineNum">     393</span>              : </span>
-<span id="L394"><span class="lineNum">     394</span> <span class="tlaGNC tlaBgGNC">          30 :         return ch</span></span>
-<span id="L395"><span class="lineNum">     395</span>              : }</span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          30 : func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {</span></span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">          30 :         ch := make(chan Status, 1)</span></span>
+<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          30 : </span></span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">          60 :         go func() {</span></span>
+<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          30 :                 var queueChannnel chan *amqp.Error</span></span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">         117 :                 for {</span></span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">          87 :                         switch &lt;-ch {</span></span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Closed, Closing:</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaUNC">           0 :                                 return</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC tlaBgGNC">          58 :                         case Connecting:</span></span>
+<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          86 :                                 if q.connStatus() != Connected {</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">          28 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">          28 :                                         ch &lt;- Connecting</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">          28 :                                         continue</span></span>
+<span id="L251"><span class="lineNum">     251</span>              :                                 }</span>
+<span id="L252"><span class="lineNum">     252</span>              : </span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          30 :                                 rawConn := q.conn.getRawConnection()</span></span>
+<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">          30 :                                 if rawConn == nil {</span></span>
+<span id="L255"><span class="lineNum">     255</span> <span class="tlaUNC tlaBgUNC">           0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L256"><span class="lineNum">     256</span> <span class="tlaUNC">           0 :                                         ch &lt;- Connecting</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :                                         continue</span></span>
+<span id="L258"><span class="lineNum">     258</span>              :                                 }</span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC tlaBgGNC">          30 :                                 channel, err := rawConn.Channel()</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          30 :                                 if err != nil {</span></span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaUNC tlaBgUNC">           0 :                                         q.onError(err)</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaUNC">           0 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L263"><span class="lineNum">     263</span> <span class="tlaUNC">           0 :                                         ch &lt;- Connecting</span></span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaUNC">           0 :                                         continue</span></span>
+<span id="L265"><span class="lineNum">     265</span>              :                                 }</span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC tlaBgGNC">          38 :                                 if q.opts.Reliable {</span></span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">           8 :                                         if err := channel.Confirm(false); err != nil {</span></span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaUNC tlaBgUNC">           0 :                                                 q.onError(err)</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaUNC">           0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaUNC">           0 :                                                 ch &lt;- Connecting</span></span>
+<span id="L271"><span class="lineNum">     271</span> <span class="tlaUNC">           0 :                                                 continue</span></span>
+<span id="L272"><span class="lineNum">     272</span>              :                                         }</span>
+<span id="L273"><span class="lineNum">     273</span>              :                                 }</span>
+<span id="L274"><span class="lineNum">     274</span>              : </span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC tlaBgGNC">          30 :                                 name := q.opts.Name</span></span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaGNC">          36 :                                 if q.opts.Broadcast {</span></span>
+<span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">           6 :                                         err := channel.ExchangeDeclare(name, amqp.ExchangeFanout, false, false, false,</span></span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">           6 :                                                 false, nil)</span></span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">           6 :                                         if err != nil {</span></span>
+<span id="L280"><span class="lineNum">     280</span> <span class="tlaUNC tlaBgUNC">           0 :                                                 q.onError(err)</span></span>
+<span id="L281"><span class="lineNum">     281</span> <span class="tlaUNC">           0 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaUNC">           0 :                                                 ch &lt;- Connecting</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaUNC">           0 :                                                 continue</span></span>
+<span id="L284"><span class="lineNum">     284</span>              :                                         }</span>
+<span id="L285"><span class="lineNum">     285</span>              : </span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC tlaBgGNC">          10 :                                         if q.opts.IsRecv {</span></span>
+<span id="L287"><span class="lineNum">     287</span> <span class="tlaGNC">           4 :                                                 queue, err := channel.QueueDeclare(&quot;&quot;, false, false, true, false, nil)</span></span>
+<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
+<span id="L289"><span class="lineNum">     289</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L290"><span class="lineNum">     290</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L292"><span class="lineNum">     292</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L293"><span class="lineNum">     293</span>              :                                                 }</span>
+<span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 err = channel.QueueBind(queue.Name, &quot;&quot;, name, false, nil)</span></span>
+<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
+<span id="L296"><span class="lineNum">     296</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L297"><span class="lineNum">     297</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L298"><span class="lineNum">     298</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L299"><span class="lineNum">     299</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L300"><span class="lineNum">     300</span>              :                                                 }</span>
+<span id="L301"><span class="lineNum">     301</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></span>
+<span id="L302"><span class="lineNum">     302</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
+<span id="L303"><span class="lineNum">     303</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L304"><span class="lineNum">     304</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L305"><span class="lineNum">     305</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L306"><span class="lineNum">     306</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L307"><span class="lineNum">     307</span>              :                                                 }</span>
+<span id="L308"><span class="lineNum">     308</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 deliveryChannel, err :=</span></span>
+<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC">           4 :                                                         channel.Consume(queue.Name, &quot;&quot;, false, false, false, false, nil)</span></span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">           4 :                                                 if err != nil {</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L312"><span class="lineNum">     312</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L313"><span class="lineNum">     313</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L314"><span class="lineNum">     314</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L315"><span class="lineNum">     315</span>              :                                                 }</span>
+<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC tlaBgGNC">           4 :                                                 q.setConsumer(deliveryChannel)</span></span>
+<span id="L317"><span class="lineNum">     317</span>              :                                         }</span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          24 :                                 } else {</span></span>
+<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          24 :                                         _, err = channel.QueueDeclare(name, true, false, false, false, nil)</span></span>
+<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC">          25 :                                         if err != nil {</span></span>
+<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">           1 :                                                 q.onError(err)</span></span>
+<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">           1 :                                                 time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">           1 :                                                 ch &lt;- Connecting</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">           1 :                                                 continue</span></span>
+<span id="L325"><span class="lineNum">     325</span>              :                                         }</span>
+<span id="L326"><span class="lineNum">     326</span>              : </span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          40 :                                         if q.opts.IsRecv {</span></span>
+<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          17 :                                                 err = channel.Qos(int(q.opts.Prefetch), 0, false)</span></span>
+<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">          17 :                                                 if err != nil {</span></span>
+<span id="L330"><span class="lineNum">     330</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L331"><span class="lineNum">     331</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L332"><span class="lineNum">     332</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L333"><span class="lineNum">     333</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L334"><span class="lineNum">     334</span>              :                                                 }</span>
+<span id="L335"><span class="lineNum">     335</span> <span class="tlaGNC tlaBgGNC">          17 :                                                 deliveryChannel, err :=</span></span>
+<span id="L336"><span class="lineNum">     336</span> <span class="tlaGNC">          17 :                                                         channel.Consume(name, &quot;&quot;, false, false, false, false, nil)</span></span>
+<span id="L337"><span class="lineNum">     337</span> <span class="tlaGNC">          17 :                                                 if err != nil {</span></span>
+<span id="L338"><span class="lineNum">     338</span> <span class="tlaUNC tlaBgUNC">           0 :                                                         q.onError(err)</span></span>
+<span id="L339"><span class="lineNum">     339</span> <span class="tlaUNC">           0 :                                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
+<span id="L340"><span class="lineNum">     340</span> <span class="tlaUNC">           0 :                                                         ch &lt;- Connecting</span></span>
+<span id="L341"><span class="lineNum">     341</span> <span class="tlaUNC">           0 :                                                         continue</span></span>
+<span id="L342"><span class="lineNum">     342</span>              :                                                 }</span>
+<span id="L343"><span class="lineNum">     343</span> <span class="tlaGNC tlaBgGNC">          17 :                                                 q.setConsumer(deliveryChannel)</span></span>
+<span id="L344"><span class="lineNum">     344</span>              :                                         }</span>
+<span id="L345"><span class="lineNum">     345</span>              :                                 }</span>
+<span id="L346"><span class="lineNum">     346</span>              : </span>
+<span id="L347"><span class="lineNum">     347</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Lock()</span></span>
+<span id="L348"><span class="lineNum">     348</span> <span class="tlaGNC">          29 :                                 if q.status == Closed || q.status == Closing {</span></span>
+<span id="L349"><span class="lineNum">     349</span> <span class="tlaUNC tlaBgUNC">           0 :                                         q.statusMutex.Unlock()</span></span>
+<span id="L350"><span class="lineNum">     350</span> <span class="tlaUNC">           0 :                                         return</span></span>
+<span id="L351"><span class="lineNum">     351</span> <span class="tlaUNC">           0 :                                 }</span></span>
+<span id="L352"><span class="lineNum">     352</span>              : </span>
+<span id="L353"><span class="lineNum">     353</span> <span class="tlaGNC tlaBgGNC">          29 :                                 q.channel = channel</span></span>
+<span id="L354"><span class="lineNum">     354</span> <span class="tlaGNC">          29 :                                 q.status = Connected</span></span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Unlock()</span></span>
+<span id="L356"><span class="lineNum">     356</span> <span class="tlaGNC">          29 : </span></span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">          29 :                                 queueChannnel = channel.NotifyClose(make(chan *amqp.Error, 1))</span></span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">          29 : </span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">          29 :                                 handler := q.handler</span></span>
+<span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC">          49 :                                 if handler != nil {</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          20 :                                         go handler.OnStatus(q, Connected)</span></span>
+<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">          20 :                                 }</span></span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">          29 :                                 ch &lt;- Connected</span></span>
+<span id="L364"><span class="lineNum">     364</span> <span class="tlaGNC">          29 :                         case Connected:</span></span>
+<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">          29 :                                 &lt;-queueChannnel</span></span>
+<span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">          29 :                                 var channel *amqp.Channel</span></span>
+<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Lock()</span></span>
+<span id="L368"><span class="lineNum">     368</span> <span class="tlaGNC">          29 :                                 q.status = Connecting</span></span>
+<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">          29 :                                 channel = q.channel</span></span>
+<span id="L370"><span class="lineNum">     370</span> <span class="tlaGNC">          29 :                                 q.channel = nil</span></span>
+<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">          29 :                                 q.statusMutex.Unlock()</span></span>
+<span id="L372"><span class="lineNum">     372</span> <span class="tlaGNC">          29 : </span></span>
+<span id="L373"><span class="lineNum">     373</span> <span class="tlaGNC">          29 :                                 handler := q.handler</span></span>
+<span id="L374"><span class="lineNum">     374</span> <span class="tlaGNC">          49 :                                 if handler != nil {</span></span>
+<span id="L375"><span class="lineNum">     375</span> <span class="tlaGNC">          20 :                                         go handler.OnStatus(q, Connecting)</span></span>
+<span id="L376"><span class="lineNum">     376</span> <span class="tlaGNC">          20 :                                 }</span></span>
+<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">          30 :                                 if channel != nil {</span></span>
+<span id="L378"><span class="lineNum">     378</span> <span class="tlaGNC">           1 :                                         _ = channel.Close()</span></span>
+<span id="L379"><span class="lineNum">     379</span> <span class="tlaGNC">           1 :                                 }</span></span>
+<span id="L380"><span class="lineNum">     380</span> <span class="tlaGNC">          29 :                                 ch &lt;- Connecting</span></span>
+<span id="L381"><span class="lineNum">     381</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Disconnected:</span></span>
+<span id="L382"><span class="lineNum">     382</span> <span class="tlaUNC">           0 :                                 q.statusMutex.Lock()</span></span>
+<span id="L383"><span class="lineNum">     383</span> <span class="tlaUNC">           0 :                                 q.status = Connecting</span></span>
+<span id="L384"><span class="lineNum">     384</span> <span class="tlaUNC">           0 :                                 q.statusMutex.Unlock()</span></span>
+<span id="L385"><span class="lineNum">     385</span> <span class="tlaUNC">           0 :                                 ch &lt;- Connecting</span></span>
+<span id="L386"><span class="lineNum">     386</span>              :                         }</span>
+<span id="L387"><span class="lineNum">     387</span>              :                 }</span>
+<span id="L388"><span class="lineNum">     388</span>              :         }()</span>
+<span id="L389"><span class="lineNum">     389</span>              : </span>
+<span id="L390"><span class="lineNum">     390</span> <span class="tlaGNC tlaBgGNC">          30 :         return ch</span></span>
+<span id="L391"><span class="lineNum">     391</span>              : }</span>
         </pre>
               </td>
             </tr>
