@@ -349,7 +349,7 @@ func (h *appMgrMqEventHandler) OnMessage(queue gmq.GmqQueue, message gmq.Message
 	_ = message.Ack()
 }
 
-func (h *appMgrMqEventHandler) onEvent(queue gmq.GmqQueue) {
+func (h *appMgrMqEventHandler) onEvent(_ gmq.GmqQueue) {
 	h.mgr.statusMutex.Lock()
 	var mgrStatus MgrStatus
 	if h.mgr.uldata.Status() == gmq.Connected &&

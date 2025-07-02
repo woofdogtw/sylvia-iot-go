@@ -144,7 +144,7 @@ func (q *MqttQueue) Close() error {
 
 	handler := q.handler
 	if handler != nil {
-		handler.OnStatus(q, Closed)
+		go handler.OnStatus(q, Closed)
 	}
 
 	return err
@@ -202,7 +202,7 @@ func (m *mqttMessage) Nack() error {
 func (m *mqttQueuePacketHandler) OnPublish(msg mqtt.Message) {
 	handler := m.queue.msgHandler
 	if handler != nil {
-		handler.OnMessage(m.queue, &mqttMessage{rawMessage: msg})
+		go handler.OnMessage(m.queue, &mqttMessage{rawMessage: msg})
 	}
 }
 
@@ -227,7 +227,7 @@ func createMqttQueueEventLoop(q *MqttQueue) chan Status {
 
 				handler := q.handler
 				if handler != nil {
-					handler.OnStatus(q, Connecting)
+					go handler.OnStatus(q, Connecting)
 				}
 
 				if q.opts.IsRecv {
@@ -243,7 +243,7 @@ func createMqttQueueEventLoop(q *MqttQueue) chan Status {
 
 				handler := q.handler
 				if handler != nil {
-					handler.OnStatus(q, Connected)
+					go handler.OnStatus(q, Connected)
 				}
 			case Disconnected:
 				q.statusMutex.Lock()

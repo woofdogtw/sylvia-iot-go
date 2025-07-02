@@ -344,7 +344,8 @@ func appUlData() {
 
 	for i := range handler.recvUlData {
 		data := &handler.recvUlData[i]
-		if data.DataID == "1" {
+		switch data.DataID {
+		case "1":
 			Expect(testMqEngine).Should(Equal(EngineRabbitMQ))
 			Expect(data.Time.UnixMilli()).Should(Equal(now.UnixMilli()))
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli() + 1))
@@ -355,7 +356,7 @@ func appUlData() {
 			Expect(data.IsPublic).Should(Equal(data1["isPublic"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data1["data"]))
 			Expect(data.Extension).Should(BeNil())
-		} else if data.DataID == "2" {
+		case "2":
 			Expect(data.Time.UnixMilli()).Should(Equal(now.UnixMilli() + 1))
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli() + 2))
 			Expect(data.DeviceID).Should(Equal(data2["deviceId"]))
@@ -365,7 +366,7 @@ func appUlData() {
 			Expect(data.IsPublic).Should(Equal(data2["isPublic"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data2["data"]))
 			Expect(data.Extension).Should(Equal(data2["extension"]))
-		} else if data.DataID == "3" {
+		case "3":
 			Expect(data.Time.UnixMilli()).Should(Equal(now.UnixMilli() + 2))
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli() + 3))
 			Expect(data.DeviceID).Should(Equal(data3["deviceId"]))
@@ -375,7 +376,7 @@ func appUlData() {
 			Expect(data.IsPublic).Should(Equal(data3["isPublic"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data3["data"]))
 			Expect(data.Extension).Should(BeNil())
-		} else {
+		default:
 			panic("receive wrong data " + data.DataID)
 		}
 	}
@@ -723,20 +724,21 @@ func appDlDataResp() {
 
 	for i := range handler.recvDlDataResp {
 		data := &handler.recvDlDataResp[i]
-		if data.CorrelationID == "1" {
+		switch data.CorrelationID {
+		case "1":
 			Expect(testMqEngine).Should(Equal(EngineRabbitMQ))
 			Expect(data.DataID).Should(Equal(data1["dataId"]))
 			Expect(data.Error).Should(BeEmpty())
 			Expect(data.Message).Should(BeEmpty())
-		} else if data.CorrelationID == "2" {
+		case "2":
 			Expect(data.DataID).Should(Equal(data2["dataId"]))
 			Expect(data.Error).Should(BeEmpty())
 			Expect(data.Message).Should(BeEmpty())
-		} else if data.CorrelationID == "3" {
+		case "3":
 			Expect(data.DataID).Should(BeEmpty())
 			Expect(data.Error).Should(Equal(data3["error"]))
 			Expect(data.Message).Should(Equal(data3["message"]))
-		} else {
+		default:
 			panic("receive wrong data " + data.CorrelationID)
 		}
 	}
@@ -910,17 +912,18 @@ func appDlDataResult() {
 
 	for i := range handler.recvDlDataResult {
 		data := &handler.recvDlDataResult[i]
-		if data.DataID == "1" {
+		switch data.DataID {
+		case "1":
 			Expect(testMqEngine).Should(Equal(EngineRabbitMQ))
 			Expect(data.Status).Should(Equal(data1["status"]))
 			Expect(data.Message).Should(BeEmpty())
-		} else if data.DataID == "2" {
+		case "2":
 			Expect(data.Status).Should(Equal(data2["status"]))
 			Expect(data.Message).Should(BeEmpty())
-		} else if data.DataID == "3" {
+		case "3":
 			Expect(data.Status).Should(Equal(data3["status"]))
 			Expect(data.Message).Should(Equal(data3["message"]))
-		} else {
+		default:
 			panic("receive wrong data " + data.DataID)
 		}
 	}

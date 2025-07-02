@@ -597,26 +597,27 @@ func netDlData() {
 
 	for i := range handler.recvDlData {
 		data := &handler.recvDlData[i]
-		if data.DataID == "1" {
+		switch data.DataID {
+		case "1":
 			Expect(testMqEngine).Should(Equal(EngineRabbitMQ))
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli()))
 			Expect(data.ExpiresIn).Should(Equal(data1["expiresIn"]))
 			Expect(data.NetworkAddr).Should(Equal(data1["networkAddr"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data1["data"]))
 			Expect(data.Extension).Should(BeNil())
-		} else if data.DataID == "2" {
+		case "2":
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli() + 1))
 			Expect(data.ExpiresIn).Should(Equal(data2["expiresIn"]))
 			Expect(data.NetworkAddr).Should(Equal(data2["networkAddr"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data2["data"]))
 			Expect(data.Extension).Should(Equal(data2["extension"]))
-		} else if data.DataID == "3" {
+		case "3":
 			Expect(data.Pub.UnixMilli()).Should(Equal(now.UnixMilli() + 2))
 			Expect(data.ExpiresIn).Should(Equal(data3["expiresIn"]))
 			Expect(data.NetworkAddr).Should(Equal(data3["networkAddr"]))
 			Expect(hex.EncodeToString(data.Data)).Should(Equal(data3["data"]))
 			Expect(data.Extension).Should(BeNil())
-		} else {
+		default:
 			panic("receive wrong data " + data.DataID)
 		}
 	}

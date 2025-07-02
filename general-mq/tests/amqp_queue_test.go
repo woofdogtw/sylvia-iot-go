@@ -120,12 +120,15 @@ func amqpQueueConnectWithHandler() {
 		waitQueueConnected(queue)
 	}
 
+	connected := false
 	for retry := retry10Ms; retry > 0; retry-- {
+		time.Sleep(10 * time.Millisecond)
 		if handler.recvConnected && handler.recvQueueName == "name" {
-			return
+			connected = true
+			break
 		}
 	}
-	panic("not connected")
+	Expect(connected).Should(BeTrue(), "queue not connected")
 }
 
 // Test `Connect()` for a conneted queue.
@@ -191,12 +194,16 @@ func amqpQueueClose() {
 
 	err = queue.Close()
 	Expect(err).ShouldNot(HaveOccurred())
+
+	closed := false
 	for retry := retry10Ms; retry > 0; retry-- {
+		time.Sleep(10 * time.Millisecond)
 		if handler.recvClosed && handler.recvQueueName == "name" {
-			return
+			closed = true
+			break
 		}
 	}
-	panic("not connected")
+	Expect(closed).Should(BeTrue(), "queue not closed")
 }
 
 // Test `close()` for a closed queue.
