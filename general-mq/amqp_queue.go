@@ -156,7 +156,7 @@ func (q *AmqpQueue) Close() error {
 
 	handler := q.handler
 	if handler != nil {
-		handler.OnStatus(q, Closed)
+		go handler.OnStatus(q, Closed)
 	}
 
 	return err
@@ -196,9 +196,7 @@ func (q *AmqpQueue) connStatus() Status {
 func (q *AmqpQueue) onError(err error) {
 	handler := q.handler
 	if handler != nil {
-		go func() {
-			handler.OnError(q, err)
-		}()
+		go handler.OnError(q, err)
 	}
 }
 
@@ -218,9 +216,7 @@ func (q *AmqpQueue) setConsumer(deliveryChannel <-chan amqp.Delivery) {
 					delivery: delivery.DeliveryTag,
 					content:  delivery.Body,
 				}
-				go func() {
-					handler.OnMessage(q, msg)
-				}()
+				go handler.OnMessage(q, msg)
 			}
 		}
 	}()
@@ -362,7 +358,7 @@ func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {
 
 				handler := q.handler
 				if handler != nil {
-					handler.OnStatus(q, Connected)
+					go handler.OnStatus(q, Connected)
 				}
 				ch <- Connected
 			case Connected:
@@ -376,7 +372,7 @@ func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {
 
 				handler := q.handler
 				if handler != nil {
-					handler.OnStatus(q, Connecting)
+					go handler.OnStatus(q, Connecting)
 				}
 				if channel != nil {
 					_ = channel.Close()

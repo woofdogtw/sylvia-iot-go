@@ -227,11 +227,12 @@ func (h *testQueueCloseHandler) OnError(queue gmq.GmqQueue, err error) {}
 func (h *testQueueCloseHandler) OnMessage(queue gmq.GmqQueue, msg gmq.Message) {}
 
 func (h *testQueueReconnectHandler) OnStatus(queue gmq.GmqQueue, status gmq.Status) {
-	if status == gmq.Connected {
+	switch status {
+	case gmq.Connected:
 		h.countMutex.Lock()
 		h.connectedCount++
 		h.countMutex.Unlock()
-	} else if status == gmq.Connecting {
+	case gmq.Connecting:
 		h.recvConneting = true
 	}
 }

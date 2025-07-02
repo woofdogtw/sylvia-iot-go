@@ -216,7 +216,7 @@ func (c *MqttConnection) Close() error {
 	c.statusMutex.Unlock()
 
 	for id, handler := range c.handlers {
-		handler.OnStatus(id, c, Closed)
+		go handler.OnStatus(id, c, Closed)
 	}
 
 	return nil
@@ -273,7 +273,7 @@ func createMqttConnectionEventLoop(c *MqttConnection) chan Status {
 				c.statusMutex.Unlock()
 
 				for id, handler := range c.handlers {
-					handler.OnStatus(id, c, Connecting)
+					go handler.OnStatus(id, c, Connecting)
 				}
 
 				if c.conn != nil {
@@ -300,7 +300,7 @@ func createMqttConnectionEventLoop(c *MqttConnection) chan Status {
 				c.statusMutex.Unlock()
 
 				for id, handler := range c.handlers {
-					handler.OnStatus(id, c, Connected)
+					go handler.OnStatus(id, c, Connected)
 				}
 			case Disconnected:
 				c.statusMutex.Lock()
@@ -384,7 +384,7 @@ func genMqttDisconnectedHandler(c *MqttConnection) mqtt.ConnectionLostHandler {
 		c.statusMutex.Unlock()
 
 		for id, handler := range c.handlers {
-			handler.OnStatus(id, c, Connecting)
+			go handler.OnStatus(id, c, Connecting)
 		}
 		c.evChannel <- Connecting
 	}
@@ -400,7 +400,7 @@ func genMqttMessageHandler(c *MqttConnection) mqtt.MessageHandler {
 		c.packetHandlersMutex.Unlock()
 
 		if item.handler != nil {
-			item.handler.OnPublish(msg)
+			go item.handler.OnPublish(msg)
 		}
 	}
 }

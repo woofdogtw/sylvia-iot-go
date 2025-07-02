@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6 - 2025-07-02
+
+### Changed
+
+- **general-mq**: Use go-routine to handle `OnStatus`.
+- Update dependencies.
+
 ## 0.1.5 - 2025-04-18
 
 ### Changed

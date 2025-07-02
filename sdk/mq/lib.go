@@ -264,7 +264,8 @@ func newDataQueues(
 	}
 
 	var err error
-	if conn.connType == connTypeAmqp {
+	switch conn.connType {
+	case connTypeAmqp:
 		prefetch := opts.Prefetch
 		if prefetch == 0 {
 			prefetch = defPrefetch
@@ -316,7 +317,7 @@ func newDataQueues(
 		} else if ctrl, err = gmq.NewAmqpQueue(ctrlOpts, _conn); err != nil {
 			return nil, err
 		}
-	} else if conn.connType == connTypeMqtt {
+	case connTypeMqtt:
 		uldataOpts := gmq.MqttQueueOptions{
 			Name:         fmt.Sprintf("%s.%s.%s.uldata", prefix, unit, opts.Name),
 			IsRecv:       !isNetwork,
@@ -359,7 +360,7 @@ func newDataQueues(
 		} else if ctrl, err = gmq.NewMqttQueue(ctrlOpts, _conn); err != nil {
 			return nil, err
 		}
-	} else {
+	default:
 		return nil, errors.New("unknown shared connection type")
 	}
 

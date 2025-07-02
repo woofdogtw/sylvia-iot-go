@@ -150,7 +150,7 @@ func (c *AmqpConnection) Close() error {
 	c.statusMutex.Unlock()
 
 	for id, handler := range c.handlers {
-		handler.OnStatus(id, c, Closed)
+		go handler.OnStatus(id, c, Closed)
 	}
 
 	return err
@@ -188,7 +188,7 @@ func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
 				connChannnel = conn.NotifyClose(make(chan *amqp.Error, 1))
 
 				for id, handler := range c.handlers {
-					handler.OnStatus(id, c, Connected)
+					go handler.OnStatus(id, c, Connected)
 				}
 				ch <- Connected
 			case Connected:
@@ -201,7 +201,7 @@ func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
 				c.statusMutex.Unlock()
 
 				for id, handler := range c.handlers {
-					handler.OnStatus(id, c, Connecting)
+					go handler.OnStatus(id, c, Connecting)
 				}
 				if conn != nil {
 					_ = conn.Close()
@@ -213,7 +213,7 @@ func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
 				c.statusMutex.Unlock()
 
 				for id, handler := range c.handlers {
-					handler.OnStatus(id, c, Connecting)
+					go handler.OnStatus(id, c, Connecting)
 				}
 				ch <- Connecting
 			}
