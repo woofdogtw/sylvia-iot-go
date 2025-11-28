@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-07-02 14:22:37</td>
+            <td class="headerValue">2025-11-28 14:05:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -265,36 +265,36 @@
 <span id="L203"><span class="lineNum">     203</span>              : // Set message consumer.</span>
 <span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC tlaBgGNC">          21 : func (q *AmqpQueue) setConsumer(deliveryChannel &lt;-chan amqp.Delivery) {</span></span>
 <span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          42 :         go func() {</span></span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          88 :                 for delivery := range deliveryChannel {</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          67 :                         channel := q.channel</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          67 :                         if channel == nil {</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          86 :                 for delivery := range deliveryChannel {</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          65 :                         channel := q.channel</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          65 :                         if channel == nil {</span></span>
 <span id="L209"><span class="lineNum">     209</span> <span class="tlaUNC tlaBgUNC">           0 :                                 return</span></span>
 <span id="L210"><span class="lineNum">     210</span> <span class="tlaUNC">           0 :                         }</span></span>
 <span id="L211"><span class="lineNum">     211</span>              : </span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC tlaBgGNC">          67 :                         handler := q.msgHandler</span></span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">         134 :                         if handler != nil {</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          67 :                                 msg := &amp;amqpMessage{</span></span>
-<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">          67 :                                         channel:  channel,</span></span>
-<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          67 :                                         delivery: delivery.DeliveryTag,</span></span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          67 :                                         content:  delivery.Body,</span></span>
-<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          67 :                                 }</span></span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          67 :                                 go handler.OnMessage(q, msg)</span></span>
-<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          67 :                         }</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC tlaBgGNC">          65 :                         handler := q.msgHandler</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">         130 :                         if handler != nil {</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          65 :                                 msg := &amp;amqpMessage{</span></span>
+<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">          65 :                                         channel:  channel,</span></span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          65 :                                         delivery: delivery.DeliveryTag,</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          65 :                                         content:  delivery.Body,</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          65 :                                 }</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          65 :                                 go handler.OnMessage(q, msg)</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          65 :                         }</span></span>
 <span id="L221"><span class="lineNum">     221</span>              :                 }</span>
 <span id="L222"><span class="lineNum">     222</span>              :         }()</span>
 <span id="L223"><span class="lineNum">     223</span>              : }</span>
 <span id="L224"><span class="lineNum">     224</span>              : </span>
-<span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">          67 : func (m *amqpMessage) Payload() []byte {</span></span>
-<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">          67 :         return m.content</span></span>
-<span id="L227"><span class="lineNum">     227</span> <span class="tlaGNC">          67 : }</span></span>
+<span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">          65 : func (m *amqpMessage) Payload() []byte {</span></span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">          65 :         return m.content</span></span>
+<span id="L227"><span class="lineNum">     227</span> <span class="tlaGNC">          65 : }</span></span>
 <span id="L228"><span class="lineNum">     228</span>              : </span>
 <span id="L229"><span class="lineNum">     229</span> <span class="tlaGNC">          23 : func (m *amqpMessage) Ack() error {</span></span>
 <span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">          23 :         return m.channel.Ack(m.delivery, false)</span></span>
 <span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">          23 : }</span></span>
 <span id="L232"><span class="lineNum">     232</span>              : </span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          44 : func (m *amqpMessage) Nack() error {</span></span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          44 :         return m.channel.Nack(m.delivery, false, true)</span></span>
-<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          44 : }</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          42 : func (m *amqpMessage) Nack() error {</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          42 :         return m.channel.Nack(m.delivery, false, true)</span></span>
+<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          42 : }</span></span>
 <span id="L236"><span class="lineNum">     236</span>              : </span>
 <span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          30 : func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {</span></span>
 <span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">          30 :         ch := make(chan Status, 1)</span></span>

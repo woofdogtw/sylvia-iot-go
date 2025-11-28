@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-07-02 14:22:37</td>
+            <td class="headerValue">2025-11-28 14:05:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -227,15 +227,15 @@
 <span id="L165"><span class="lineNum">     165</span>              : }</span>
 <span id="L166"><span class="lineNum">     166</span>              : </span>
 <span id="L167"><span class="lineNum">     167</span>              : // To get the associated connection status.</span>
-<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          41 : func (q *MqttQueue) connStatus() Status {</span></span>
-<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          41 :         return q.conn.status</span></span>
-<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          41 : }</span></span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          42 : func (q *MqttQueue) connStatus() Status {</span></span>
+<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          42 :         return q.conn.status</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          42 : }</span></span>
 <span id="L171"><span class="lineNum">     171</span>              : </span>
 <span id="L172"><span class="lineNum">     172</span>              : // To get the associated topic.</span>
-<span id="L173"><span class="lineNum">     173</span> <span class="tlaGNC">          15 : func (q *MqttQueue) topic() string {</span></span>
-<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">          26 :         if !q.opts.Broadcast {</span></span>
-<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          11 :                 return q.opts.SharedPrefix + q.opts.Name</span></span>
-<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          11 :         }</span></span>
+<span id="L173"><span class="lineNum">     173</span> <span class="tlaGNC">          16 : func (q *MqttQueue) topic() string {</span></span>
+<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">          28 :         if !q.opts.Broadcast {</span></span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          12 :                 return q.opts.SharedPrefix + q.opts.Name</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          12 :         }</span></span>
 <span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">           4 :         return q.opts.Name</span></span>
 <span id="L178"><span class="lineNum">     178</span>              : }</span>
 <span id="L179"><span class="lineNum">     179</span>              : </span>
@@ -272,41 +272,41 @@
 <span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">          22 :         ch := make(chan Status, 1)</span></span>
 <span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">          22 : </span></span>
 <span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">          44 :         go func() {</span></span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">         103 :                 for {</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          81 :                         switch &lt;-ch {</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">         104 :                 for {</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          82 :                         switch &lt;-ch {</span></span>
 <span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">          20 :                         case Closed, Closing:</span></span>
 <span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          20 :                                 return</span></span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          41 :                         case Connecting:</span></span>
-<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          41 :                                 q.statusMutex.Lock()</span></span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          41 :                                 q.status = Connecting</span></span>
-<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          41 :                                 q.statusMutex.Unlock()</span></span>
-<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">          41 : </span></span>
-<span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC">          62 :                                 if q.connStatus() != Connected {</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          42 :                         case Connecting:</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">          42 :                                 q.statusMutex.Lock()</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">          42 :                                 q.status = Connecting</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">          42 :                                 q.statusMutex.Unlock()</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">          42 : </span></span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC">          63 :                                 if q.connStatus() != Connected {</span></span>
 <span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">          21 :                                         time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)</span></span>
 <span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">          21 :                                         ch &lt;- Connecting</span></span>
 <span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">          21 :                                         continue</span></span>
 <span id="L226"><span class="lineNum">     226</span>              :                                 }</span>
 <span id="L227"><span class="lineNum">     227</span>              : </span>
-<span id="L228"><span class="lineNum">     228</span> <span class="tlaGNC">          20 :                                 handler := q.handler</span></span>
-<span id="L229"><span class="lineNum">     229</span> <span class="tlaGNC">          34 :                                 if handler != nil {</span></span>
+<span id="L228"><span class="lineNum">     228</span> <span class="tlaGNC">          21 :                                 handler := q.handler</span></span>
+<span id="L229"><span class="lineNum">     229</span> <span class="tlaGNC">          35 :                                 if handler != nil {</span></span>
 <span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">          14 :                                         go handler.OnStatus(q, Connecting)</span></span>
 <span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">          14 :                                 }</span></span>
 <span id="L232"><span class="lineNum">     232</span>              : </span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          35 :                                 if q.opts.IsRecv {</span></span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          15 :                                         packetHandler := &amp;mqttQueuePacketHandler{queue: q}</span></span>
-<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          15 :                                         q.conn.addPacketHandler(q.opts.Name, q.topic(), q.opts.Reliable, packetHandler)</span></span>
-<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          15 :                                 }</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          37 :                                 if q.opts.IsRecv {</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          16 :                                         packetHandler := &amp;mqttQueuePacketHandler{queue: q}</span></span>
+<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          16 :                                         q.conn.addPacketHandler(q.opts.Name, q.topic(), q.opts.Reliable, packetHandler)</span></span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          16 :                                 }</span></span>
 <span id="L237"><span class="lineNum">     237</span>              : </span>
-<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">          20 :                                 ch &lt;- Connected</span></span>
-<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          19 :                         case Connected:</span></span>
-<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">          19 :                                 q.statusMutex.Lock()</span></span>
-<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          19 :                                 q.status = Connected</span></span>
-<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          19 :                                 q.statusMutex.Unlock()</span></span>
-<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">          19 : </span></span>
-<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          19 :                                 handler := q.handler</span></span>
-<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">          32 :                                 if handler != nil {</span></span>
-<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          13 :                                         go handler.OnStatus(q, Connected)</span></span>
-<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          13 :                                 }</span></span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">          21 :                                 ch &lt;- Connected</span></span>
+<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          20 :                         case Connected:</span></span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">          20 :                                 q.statusMutex.Lock()</span></span>
+<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          20 :                                 q.status = Connected</span></span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          20 :                                 q.statusMutex.Unlock()</span></span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">          20 : </span></span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          20 :                                 handler := q.handler</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">          34 :                                 if handler != nil {</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          14 :                                         go handler.OnStatus(q, Connected)</span></span>
+<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          14 :                                 }</span></span>
 <span id="L248"><span class="lineNum">     248</span> <span class="tlaUNC tlaBgUNC">           0 :                         case Disconnected:</span></span>
 <span id="L249"><span class="lineNum">     249</span> <span class="tlaUNC">           0 :                                 q.statusMutex.Lock()</span></span>
 <span id="L250"><span class="lineNum">     250</span> <span class="tlaUNC">           0 :                                 q.status = Disconnected</span></span>
