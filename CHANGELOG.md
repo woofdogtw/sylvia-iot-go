@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.8 - 2026-03-20
+
+### Changed
+
+- Update dependencies.
+
+### Fixed
+
+- Fix for AI code review.
+    - **general-mq**: Fix race conditions of handler operations and OnStatus() usages.
+    - **general-mq**: Fix implicit channel blocking.
+    - **general-mq**: Fix MQTT send error handling.
+    - **general-mq**: Fix state transition race after Close().
+    - **sdk**: Fix access token handling with locks.
+    - **sdk**: Fix race condition of connection counter locking.
+    - **sdk**: Fix manager status read without lock.
+    - **sdk**: Add type assertion safety checks.
+
 ## 0.1.7 - 2025-11-28
 
 ### Changed

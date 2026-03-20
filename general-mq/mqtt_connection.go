@@ -3,13 +3,13 @@ package gmq
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"net/url"
 	"strconv"
 	"sync"
 	"time"
 
 	randomString "github.com/delphinus/random-string"
-	"github.com/dlclark/regexp2"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
@@ -20,20 +20,20 @@ type MqttConnection struct {
 	// Connection status.
 	status Status
 	// Connection status mutex for changing `status`, `conn` and `evChannel`.
-	statusMutex sync.Mutex
+	statusMutex sync.RWMutex
 	// Hold the connection instance.
 	conn mqtt.Client
 	// Event handlers.
 	handlers map[string]ConnectionHandler
 	// Handler mutex.
-	handlersMutex sync.Mutex
+	handlersMutex sync.RWMutex
 	// Publish packet handlers. The key is the queue name.
 	//
 	// Because MQTT is connection-driven, the receiver `MqttQueue` queues must register a handler to
 	// receive `mqtt.Message` packets.
 	packetHandlers map[string]mqttPacketHandlerItem
 	// Packet handler mutex.
-	packetHandlersMutex sync.Mutex
+	packetHandlersMutex sync.RWMutex
 	// The unique MQTT message handler and publish to the associated queue by the topic.
 	mqttMessageHandler mqtt.MessageHandler
 	// The event loop channel.
@@ -116,6 +116,9 @@ var (
 		"mqtt":  "tcp",
 		"mqtts": "ssl",
 	}
+
+	// Pre-compiled regex for client ID validation.
+	mqttClientIDRegex = regexp2MustCompile(mqttClientIDPattern)
 )
 
 var _ GmqConnection = (*MqttConnection)(nil)
@@ -161,6 +164,8 @@ func NewMqttConnection(opts MqttConnectionOptions) (*MqttConnection, error) {
 }
 
 func (c *MqttConnection) Status() Status {
+	c.statusMutex.RLock()
+	defer c.statusMutex.RUnlock()
 	return c.status
 }
 
@@ -211,11 +216,9 @@ func (c *MqttConnection) Close() error {
 		conn.Disconnect(0)
 	}
 
-	c.statusMutex.Lock()
-	c.status = Closed
-	c.statusMutex.Unlock()
+	c.setStatus(Closed)
 
-	for id, handler := range c.handlers {
+	for id, handler := range c.cloneHandlers() {
 		go handler.OnStatus(id, c, Closed)
 	}
 
@@ -224,7 +227,26 @@ func (c *MqttConnection) Close() error {
 
 // To get the raw MQTT connection instance for topic operations such as subscribe or publish.
 func (c *MqttConnection) getRawConnection() mqtt.Client {
+	c.statusMutex.RLock()
+	defer c.statusMutex.RUnlock()
 	return c.conn
+}
+
+// Set status with mutex.
+func (c *MqttConnection) setStatus(status Status) {
+	c.statusMutex.Lock()
+	c.status = status
+	c.statusMutex.Unlock()
+}
+
+// Clone handlers under lock for safe iteration.
+func (c *MqttConnection) cloneHandlers() map[string]ConnectionHandler {
+	c.handlersMutex.RLock()
+	defer c.handlersMutex.RUnlock()
+
+	copied := make(map[string]ConnectionHandler, len(c.handlers))
+	maps.Copy(copied, c.handlers)
+	return copied
 }
 
 // To add a packet handler for `MqttQueue`. The `name` is the queue name.
@@ -242,8 +264,11 @@ func (c *MqttConnection) addPacketHandler(name string, topic string, reliable bo
 	}
 	c.packetHandlersMutex.Unlock()
 
-	token := c.conn.Subscribe(topic, qos, c.mqttMessageHandler)
-	_ = token.WaitTimeout(c.opts.reconnect)
+	conn := c.getRawConnection()
+	if conn != nil {
+		token := conn.Subscribe(topic, qos, c.mqttMessageHandler)
+		_ = token.WaitTimeout(c.opts.reconnect)
+	}
 }
 
 // To remove a packet handler. The `name` is the queue name.
@@ -254,13 +279,16 @@ func (c *MqttConnection) removePacketHandler(name string) {
 	c.packetHandlersMutex.Unlock()
 
 	if item.handler != nil {
-		token := c.conn.Unsubscribe(item.topic)
-		_ = token.WaitTimeout(c.opts.reconnect)
+		conn := c.getRawConnection()
+		if conn != nil {
+			token := conn.Unsubscribe(item.topic)
+			_ = token.WaitTimeout(c.opts.reconnect)
+		}
 	}
 }
 
 func createMqttConnectionEventLoop(c *MqttConnection) chan Status {
-	ch := make(chan Status, 1)
+	ch := make(chan Status, 2)
 
 	go func() {
 		for {
@@ -268,15 +296,13 @@ func createMqttConnectionEventLoop(c *MqttConnection) chan Status {
 			case Closed, Closing:
 				return
 			case Connecting:
-				c.statusMutex.Lock()
-				c.status = Connecting
-				c.statusMutex.Unlock()
+				c.setStatus(Connecting)
 
-				for id, handler := range c.handlers {
+				for id, handler := range c.cloneHandlers() {
 					go handler.OnStatus(id, c, Connecting)
 				}
 
-				if c.conn != nil {
+				if c.getRawConnection() != nil {
 					// We use paho auto reconnect mechanism.
 					continue
 				}
@@ -292,18 +318,23 @@ func createMqttConnectionEventLoop(c *MqttConnection) chan Status {
 					SetOnConnectHandler(genMqttConnectedHandler(c)).
 					SetPassword(c.opts.uri.password).
 					SetUsername(c.opts.uri.username)
-				c.conn = mqtt.NewClient(opts)
-				c.conn.Connect()
-			case Connected:
+				conn := mqtt.NewClient(opts)
 				c.statusMutex.Lock()
-				c.status = Connected
+				c.conn = conn
 				c.statusMutex.Unlock()
+				conn.Connect()
+			case Connected:
+				c.setStatus(Connected)
 
-				for id, handler := range c.handlers {
+				for id, handler := range c.cloneHandlers() {
 					go handler.OnStatus(id, c, Connected)
 				}
 			case Disconnected:
 				c.statusMutex.Lock()
+				if c.status == Closed || c.status == Closing {
+					c.statusMutex.Unlock()
+					return
+				}
 				c.status = Disconnected
 				c.statusMutex.Unlock()
 
@@ -343,11 +374,7 @@ func mqttParseURI(uri string) (mqttURI, error) {
 
 // To validate the MQTT client name.
 func mqttClientIDValidate(name string) bool {
-	regexp, err := regexp2.Compile(mqttClientIDPattern, regexp2.None)
-	if err != nil || regexp == nil {
-		return false
-	}
-	match, _ := regexp.MatchString(name)
+	match, _ := mqttClientIDRegex.MatchString(name)
 	return match
 }
 
@@ -363,12 +390,12 @@ func genMqttConnectedHandler(c *MqttConnection) mqtt.OnConnectHandler {
 
 		// Subscribe all topics again.
 		topics := map[string]byte{}
-		c.packetHandlersMutex.Lock()
+		c.packetHandlersMutex.RLock()
 		for _, item := range c.packetHandlers {
 			topics[item.topic] = item.qos
 		}
-		c.packetHandlersMutex.Unlock()
-		conn := c.conn
+		c.packetHandlersMutex.RUnlock()
+		conn := c.getRawConnection()
 		if conn != nil {
 			conn.SubscribeMultiple(topics, c.mqttMessageHandler)
 		}
@@ -379,11 +406,9 @@ func genMqttConnectedHandler(c *MqttConnection) mqtt.OnConnectHandler {
 
 func genMqttDisconnectedHandler(c *MqttConnection) mqtt.ConnectionLostHandler {
 	return func(_c mqtt.Client, err error) {
-		c.statusMutex.Lock()
-		c.status = Connecting
-		c.statusMutex.Unlock()
+		c.setStatus(Connecting)
 
-		for id, handler := range c.handlers {
+		for id, handler := range c.cloneHandlers() {
 			go handler.OnStatus(id, c, Connecting)
 		}
 		c.evChannel <- Connecting
@@ -395,9 +420,9 @@ func genMqttMessageHandler(c *MqttConnection) mqtt.MessageHandler {
 		topic := msg.Topic()
 
 		var item mqttPacketHandlerItem
-		c.packetHandlersMutex.Lock()
+		c.packetHandlersMutex.RLock()
 		item = c.packetHandlers[topic]
-		c.packetHandlersMutex.Unlock()
+		c.packetHandlersMutex.RUnlock()
 
 		if item.handler != nil {
 			go item.handler.OnPublish(msg)

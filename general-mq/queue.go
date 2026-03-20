@@ -68,12 +68,20 @@ const (
 	queueNamePattern = "^[a-z0-9_-]+([\\.]{1}[a-z0-9_-]+)*$"
 )
 
+// Pre-compiled regex for queue name validation.
+var queueNameRegex = regexp2MustCompile(queueNamePattern)
+
 // To validate the queue name.
 func nameValidate(name string) bool {
-	regexp, err := regexp2.Compile(queueNamePattern, regexp2.None)
-	if err != nil || regexp == nil {
-		return false
-	}
-	match, _ := regexp.MatchString(name)
+	match, _ := queueNameRegex.MatchString(name)
 	return match
+}
+
+// Compile a regexp2 pattern, panics on failure.
+func regexp2MustCompile(pattern string) *regexp2.Regexp {
+	re, err := regexp2.Compile(pattern, regexp2.None)
+	if err != nil {
+		panic("invalid regex pattern: " + pattern)
+	}
+	return re
 }

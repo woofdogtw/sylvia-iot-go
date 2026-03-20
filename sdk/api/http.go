@@ -26,7 +26,7 @@ type Client struct {
 	// The access token.
 	accessToken string
 	// Mutex for access token.
-	mutex sync.Mutex
+	mutex sync.RWMutex
 }
 
 // Options of the HTTP client [`Client`] that contains OAuth2 information.
@@ -88,7 +88,7 @@ func (c *Client) Request(
 ) (statusCode int, resBody []byte, err error) {
 	url := c.coremgrBase + apiPath
 	for retry := 1; ; retry-- {
-		token := c.accessToken
+		token := c.getAccessToken()
 		if token == "" {
 			token, err = c.authToken()
 			if err != nil {
@@ -129,6 +129,12 @@ func (e *Oauth2Error) Error() string {
 
 func (e *ApiError) Error() string {
 	return fmt.Sprintf("code: %s, message: %s", e.Code, e.Message)
+}
+
+func (c *Client) getAccessToken() string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.accessToken
 }
 
 func (c *Client) authToken() (string, error) {

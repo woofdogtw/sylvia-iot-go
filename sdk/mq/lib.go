@@ -218,11 +218,14 @@ func removeConnection(pool *ConnectionPool, hostUri string, count int) error {
 		pool.mutex.Unlock()
 		return nil
 	}
+	conn.mutex.Lock()
 	conn.counter -= count
 	if conn.counter > 0 {
+		conn.mutex.Unlock()
 		pool.mutex.Unlock()
 		return nil
 	}
+	conn.mutex.Unlock()
 	delete(pool.connections, hostUri)
 	pool.mutex.Unlock()
 
@@ -305,7 +308,10 @@ func newDataQueues(
 			Reliable: true,
 			Prefetch: prefetch,
 		}
-		_conn := conn.connection.(*gmq.AmqpConnection)
+		_conn, ok := conn.connection.(*gmq.AmqpConnection)
+		if !ok {
+			return nil, errors.New("connection is not *AmqpConnection")
+		}
 		if uldata, err = gmq.NewAmqpQueue(uldataOpts, _conn); err != nil {
 			return nil, err
 		} else if dldata, err = gmq.NewAmqpQueue(dldataOpts, _conn); err != nil {
@@ -348,7 +354,10 @@ func newDataQueues(
 			Reliable:     true,
 			SharedPrefix: opts.SharedPrefix,
 		}
-		_conn := conn.connection.(*gmq.MqttConnection)
+		_conn, ok := conn.connection.(*gmq.MqttConnection)
+		if !ok {
+			return nil, errors.New("connection is not *MqttConnection")
+		}
 		if uldata, err = gmq.NewMqttQueue(uldataOpts, _conn); err != nil {
 			return nil, err
 		} else if dldata, err = gmq.NewMqttQueue(dldataOpts, _conn); err != nil {
