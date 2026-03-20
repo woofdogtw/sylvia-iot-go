@@ -31,13 +31,13 @@
             <td class="headerValue">sdk.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">78.9&nbsp;%</td>
-            <td class="headerCovTableEntry">76</td>
-            <td class="headerCovTableEntry">60</td>
+            <td class="headerCovTableEntryMed">80.2&nbsp;%</td>
+            <td class="headerCovTableEntry">81</td>
+            <td class="headerCovTableEntry">65</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-11-28 14:06:00</td>
+            <td class="headerValue">2026-03-20 14:17:50</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -88,7 +88,7 @@
 <span id="L26"><span class="lineNum">      26</span>              :         // The access token.</span>
 <span id="L27"><span class="lineNum">      27</span>              :         accessToken string</span>
 <span id="L28"><span class="lineNum">      28</span>              :         // Mutex for access token.</span>
-<span id="L29"><span class="lineNum">      29</span>              :         mutex sync.Mutex</span>
+<span id="L29"><span class="lineNum">      29</span>              :         mutex sync.RWMutex</span>
 <span id="L30"><span class="lineNum">      30</span>              : }</span>
 <span id="L31"><span class="lineNum">      31</span>              : </span>
 <span id="L32"><span class="lineNum">      32</span>              : // Options of the HTTP client [`Client`] that contains OAuth2 information.</span>
@@ -150,7 +150,7 @@
 <span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">          10 : ) (statusCode int, resBody []byte, err error) {</span></span>
 <span id="L89"><span class="lineNum">      89</span> <span class="tlaGNC">          10 :         url := c.coremgrBase + apiPath</span></span>
 <span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          21 :         for retry := 1; ; retry-- {</span></span>
-<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          11 :                 token := c.accessToken</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          11 :                 token := c.getAccessToken()</span></span>
 <span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          21 :                 if token == &quot;&quot; {</span></span>
 <span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          10 :                         token, err = c.authToken()</span></span>
 <span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">          12 :                         if err != nil {</span></span>
@@ -193,34 +193,40 @@
 <span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :         return fmt.Sprintf(&quot;code: %s, message: %s&quot;, e.Code, e.Message)</span></span>
 <span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 : }</span></span>
 <span id="L133"><span class="lineNum">     133</span>              : </span>
-<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC tlaBgGNC">          10 : func (c *Client) authToken() (string, error) {</span></span>
-<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">          10 :         body := url.Values{&quot;grant_type&quot;: []string{&quot;client_credentials&quot;}}</span></span>
-<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">          10 :         bodyReader := bytes.NewReader([]byte(body.Encode()))</span></span>
-<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">          10 :         req, err := http.NewRequest(http.MethodPost, c.authBase+&quot;/oauth2/token&quot;, bodyReader)</span></span>
-<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">          10 :         if err != nil {</span></span>
-<span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
-<span id="L140"><span class="lineNum">     140</span> <span class="tlaUNC">           0 :         }</span></span>
-<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC tlaBgGNC">          10 :         req.SetBasicAuth(url.QueryEscape(c.clientID), url.QueryEscape(c.clientSecret))</span></span>
-<span id="L142"><span class="lineNum">     142</span> <span class="tlaGNC">          10 :         req.Header.Add(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span></span>
-<span id="L143"><span class="lineNum">     143</span> <span class="tlaGNC">          10 :         res, err := c.client.Do(req)</span></span>
-<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">          12 :         if err != nil {</span></span>
-<span id="L145"><span class="lineNum">     145</span> <span class="tlaGNC">           2 :                 return &quot;&quot;, err</span></span>
-<span id="L146"><span class="lineNum">     146</span> <span class="tlaGNC">           2 :         }</span></span>
-<span id="L147"><span class="lineNum">     147</span> <span class="tlaGNC">           8 :         defer res.Body.Close()</span></span>
-<span id="L148"><span class="lineNum">     148</span> <span class="tlaGNC">           8 :         bodyBytes, err := io.ReadAll(res.Body)</span></span>
-<span id="L149"><span class="lineNum">     149</span> <span class="tlaGNC">           8 :         if err != nil {</span></span>
-<span id="L150"><span class="lineNum">     150</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
-<span id="L151"><span class="lineNum">     151</span> <span class="tlaUNC">           0 :         }</span></span>
-<span id="L152"><span class="lineNum">     152</span> <span class="tlaGNC tlaBgGNC">           8 :         var tokenRes oauth2TokenRes</span></span>
-<span id="L153"><span class="lineNum">     153</span> <span class="tlaGNC">           8 :         if err = json.Unmarshal(bodyBytes, &amp;tokenRes); err != nil {</span></span>
-<span id="L154"><span class="lineNum">     154</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
-<span id="L155"><span class="lineNum">     155</span> <span class="tlaUNC">           0 :         }</span></span>
-<span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC tlaBgGNC">           8 :         c.mutex.Lock()</span></span>
-<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">           8 :         c.accessToken = tokenRes.AccessToken</span></span>
-<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">           8 :         c.mutex.Unlock()</span></span>
-<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">           8 : </span></span>
-<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">           8 :         return tokenRes.AccessToken, nil</span></span>
-<span id="L161"><span class="lineNum">     161</span>              : }</span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC tlaBgGNC">          11 : func (c *Client) getAccessToken() string {</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">          11 :         c.mutex.RLock()</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">          11 :         defer c.mutex.RUnlock()</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">          11 :         return c.accessToken</span></span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">          11 : }</span></span>
+<span id="L139"><span class="lineNum">     139</span>              : </span>
+<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">          10 : func (c *Client) authToken() (string, error) {</span></span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">          10 :         body := url.Values{&quot;grant_type&quot;: []string{&quot;client_credentials&quot;}}</span></span>
+<span id="L142"><span class="lineNum">     142</span> <span class="tlaGNC">          10 :         bodyReader := bytes.NewReader([]byte(body.Encode()))</span></span>
+<span id="L143"><span class="lineNum">     143</span> <span class="tlaGNC">          10 :         req, err := http.NewRequest(http.MethodPost, c.authBase+&quot;/oauth2/token&quot;, bodyReader)</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">          10 :         if err != nil {</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaUNC">           0 :         }</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaGNC tlaBgGNC">          10 :         req.SetBasicAuth(url.QueryEscape(c.clientID), url.QueryEscape(c.clientSecret))</span></span>
+<span id="L148"><span class="lineNum">     148</span> <span class="tlaGNC">          10 :         req.Header.Add(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span></span>
+<span id="L149"><span class="lineNum">     149</span> <span class="tlaGNC">          10 :         res, err := c.client.Do(req)</span></span>
+<span id="L150"><span class="lineNum">     150</span> <span class="tlaGNC">          12 :         if err != nil {</span></span>
+<span id="L151"><span class="lineNum">     151</span> <span class="tlaGNC">           2 :                 return &quot;&quot;, err</span></span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaGNC">           2 :         }</span></span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaGNC">           8 :         defer res.Body.Close()</span></span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaGNC">           8 :         bodyBytes, err := io.ReadAll(res.Body)</span></span>
+<span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">           8 :         if err != nil {</span></span>
+<span id="L156"><span class="lineNum">     156</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaUNC">           0 :         }</span></span>
+<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC tlaBgGNC">           8 :         var tokenRes oauth2TokenRes</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">           8 :         if err = json.Unmarshal(bodyBytes, &amp;tokenRes); err != nil {</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaUNC tlaBgUNC">           0 :                 return &quot;&quot;, err</span></span>
+<span id="L161"><span class="lineNum">     161</span> <span class="tlaUNC">           0 :         }</span></span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC tlaBgGNC">           8 :         c.mutex.Lock()</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">           8 :         c.accessToken = tokenRes.AccessToken</span></span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaGNC">           8 :         c.mutex.Unlock()</span></span>
+<span id="L165"><span class="lineNum">     165</span> <span class="tlaGNC">           8 : </span></span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">           8 :         return tokenRes.AccessToken, nil</span></span>
+<span id="L167"><span class="lineNum">     167</span>              : }</span>
         </pre>
               </td>
             </tr>
