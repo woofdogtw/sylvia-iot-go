@@ -4,9 +4,9 @@ on:
     tags:
       - v*
 env:
-  GHR_VER: v0.17.0
+  GHR_VER: v0.18.0
   BIN_DIR: dist
-  SBOM_VER: v1.26.1
+  SBOM_VER: v1.42.2
   SBOM_DIR: sbom
 jobs:
   release:
@@ -16,7 +16,7 @@ jobs:
       RELEASE_VER: ${{ github.ref_name }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
       - name: Prepare assets

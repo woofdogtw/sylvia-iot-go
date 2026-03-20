@@ -2,6 +2,7 @@ package gmq
 
 import (
 	"fmt"
+	"maps"
 	"net/url"
 	"sync"
 	"time"
@@ -17,13 +18,13 @@ type AmqpConnection struct {
 	// Connection status.
 	status Status
 	// Connection status mutex for changing `status`, `conn` and `evChannel`.
-	statusMutex sync.Mutex
+	statusMutex sync.RWMutex
 	// Hold the connection instance.
 	conn *amqp.Connection
 	// Event handlers.
 	handlers map[string]ConnectionHandler
 	// Handler mutex.
-	handlersMutex sync.Mutex
+	handlersMutex sync.RWMutex
 	// The event loop channel.
 	evChannel chan Status
 }
@@ -88,12 +89,9 @@ func NewAmqpConnection(opts AmqpConnectionOptions) (*AmqpConnection, error) {
 	}, nil
 }
 
-// To get the raw AMQP connection instance for channel declaration.
-func (c *AmqpConnection) getRawConnection() *amqp.Connection {
-	return c.conn
-}
-
 func (c *AmqpConnection) Status() Status {
+	c.statusMutex.RLock()
+	defer c.statusMutex.RUnlock()
 	return c.status
 }
 
@@ -145,22 +143,44 @@ func (c *AmqpConnection) Close() error {
 		err = conn.Close()
 	}
 
-	c.statusMutex.Lock()
-	c.status = Closed
-	c.statusMutex.Unlock()
+	c.setStatus(Closed)
 
-	for id, handler := range c.handlers {
+	for id, handler := range c.cloneHandlers() {
 		go handler.OnStatus(id, c, Closed)
 	}
 
 	return err
 }
 
+// To get the raw AMQP connection instance for channel declaration.
+func (c *AmqpConnection) getRawConnection() *amqp.Connection {
+	c.statusMutex.RLock()
+	defer c.statusMutex.RUnlock()
+	return c.conn
+}
+
+// Set status with mutex.
+func (c *AmqpConnection) setStatus(status Status) {
+	c.statusMutex.Lock()
+	c.status = status
+	c.statusMutex.Unlock()
+}
+
+// Clone handlers under lock for safe iteration.
+func (c *AmqpConnection) cloneHandlers() map[string]ConnectionHandler {
+	c.handlersMutex.RLock()
+	defer c.handlersMutex.RUnlock()
+
+	copied := make(map[string]ConnectionHandler, len(c.handlers))
+	maps.Copy(copied, c.handlers)
+	return copied
+}
+
 func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
-	ch := make(chan Status, 1)
+	ch := make(chan Status, 2)
 
 	go func() {
-		var connChannnel chan *amqp.Error
+		var connChannel chan *amqp.Error
 		for {
 			switch <-ch {
 			case Closed, Closing:
@@ -185,22 +205,25 @@ func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
 				c.conn = conn
 				c.statusMutex.Unlock()
 
-				connChannnel = conn.NotifyClose(make(chan *amqp.Error, 1))
+				connChannel = conn.NotifyClose(make(chan *amqp.Error, 1))
 
-				for id, handler := range c.handlers {
+				for id, handler := range c.cloneHandlers() {
 					go handler.OnStatus(id, c, Connected)
 				}
 				ch <- Connected
 			case Connected:
-				<-connChannnel
-				var conn *amqp.Connection
+				<-connChannel
 				c.statusMutex.Lock()
+				if c.status == Closed || c.status == Closing {
+					c.statusMutex.Unlock()
+					return
+				}
 				c.status = Connecting
-				conn = c.conn
+				conn := c.conn
 				c.conn = nil
 				c.statusMutex.Unlock()
 
-				for id, handler := range c.handlers {
+				for id, handler := range c.cloneHandlers() {
 					go handler.OnStatus(id, c, Connecting)
 				}
 				if conn != nil {
@@ -209,10 +232,14 @@ func createAmqpConnectionEventLoop(c *AmqpConnection) chan Status {
 				ch <- Connecting
 			case Disconnected:
 				c.statusMutex.Lock()
+				if c.status == Closed || c.status == Closing {
+					c.statusMutex.Unlock()
+					return
+				}
 				c.status = Connecting
 				c.statusMutex.Unlock()
 
-				for id, handler := range c.handlers {
+				for id, handler := range c.cloneHandlers() {
 					go handler.OnStatus(id, c, Connecting)
 				}
 				ch <- Connecting

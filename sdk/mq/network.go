@@ -85,7 +85,7 @@ type NetworkMgr struct {
 	ctrl         gmq.GmqQueue
 
 	status      MgrStatus
-	statusMutex sync.Mutex
+	statusMutex sync.RWMutex
 	handler     NetMgrEventHandler
 }
 
@@ -238,6 +238,8 @@ func (mgr *NetworkMgr) Name() string {
 
 // Manager status.
 func (mgr *NetworkMgr) Status() MgrStatus {
+	mgr.statusMutex.RLock()
+	defer mgr.statusMutex.RUnlock()
 	return mgr.status
 }
 

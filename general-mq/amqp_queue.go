@@ -21,11 +21,15 @@ type AmqpQueue struct {
 	// Queue status.
 	status Status
 	// Queue status mutex for changing `status`, `channel` and `evChannel`.
-	statusMutex sync.Mutex
+	statusMutex sync.RWMutex
 	// The event handler.
 	handler QueueEventHandler
+	// Handler mutex.
+	handlerMutex sync.RWMutex
 	// The message handler.
 	msgHandler QueueMessageHandler
+	// Message handler mutex.
+	msgHandlerMutex sync.RWMutex
 	// The event loop channel.
 	evChannel chan Status
 }
@@ -97,23 +101,29 @@ func (q *AmqpQueue) IsRecv() bool {
 }
 
 func (q *AmqpQueue) Status() Status {
+	q.statusMutex.RLock()
+	defer q.statusMutex.RUnlock()
 	return q.status
 }
 
 func (q *AmqpQueue) SetHandler(handler QueueEventHandler) {
+	q.handlerMutex.Lock()
 	q.handler = handler
+	q.handlerMutex.Unlock()
 }
 
 func (q *AmqpQueue) SetMsgHandler(handler QueueMessageHandler) error {
 	if handler == nil {
 		return errors.New("cannot use nil message handler")
 	}
+	q.msgHandlerMutex.Lock()
 	q.msgHandler = handler
+	q.msgHandlerMutex.Unlock()
 	return nil
 }
 
 func (q *AmqpQueue) Connect() error {
-	if q.opts.IsRecv && q.msgHandler == nil {
+	if q.opts.IsRecv && q.getMsgHandler() == nil {
 		return fmt.Errorf("%s", NoMsgHandler)
 	}
 
@@ -150,11 +160,9 @@ func (q *AmqpQueue) Close() error {
 		err = channel.Close()
 	}
 
-	q.statusMutex.Lock()
-	q.status = Closed
-	q.statusMutex.Unlock()
+	q.setStatus(Closed)
 
-	handler := q.handler
+	handler := q.getHandler()
 	if handler != nil {
 		go handler.OnStatus(q, Closed)
 	}
@@ -167,7 +175,7 @@ func (q *AmqpQueue) SendMsg(payload []byte) error {
 		return fmt.Errorf("%s", QueueIsReceiver)
 	}
 
-	channel := q.channel
+	channel := q.getChannel()
 	if channel == nil {
 		return fmt.Errorf("%s", NotConnected)
 	}
@@ -189,12 +197,40 @@ func (q *AmqpQueue) SendMsg(payload []byte) error {
 
 // To get the associated connection status.
 func (q *AmqpQueue) connStatus() Status {
-	return q.conn.status
+	return q.conn.Status()
+}
+
+// Set status with mutex.
+func (q *AmqpQueue) setStatus(status Status) {
+	q.statusMutex.Lock()
+	q.status = status
+	q.statusMutex.Unlock()
+}
+
+// Get channel with mutex.
+func (q *AmqpQueue) getChannel() *amqp.Channel {
+	q.statusMutex.RLock()
+	defer q.statusMutex.RUnlock()
+	return q.channel
+}
+
+// Get handler with mutex.
+func (q *AmqpQueue) getHandler() QueueEventHandler {
+	q.handlerMutex.RLock()
+	defer q.handlerMutex.RUnlock()
+	return q.handler
+}
+
+// Get message handler with mutex.
+func (q *AmqpQueue) getMsgHandler() QueueMessageHandler {
+	q.msgHandlerMutex.RLock()
+	defer q.msgHandlerMutex.RUnlock()
+	return q.msgHandler
 }
 
 // The error handling.
 func (q *AmqpQueue) onError(err error) {
-	handler := q.handler
+	handler := q.getHandler()
 	if handler != nil {
 		go handler.OnError(q, err)
 	}
@@ -204,12 +240,12 @@ func (q *AmqpQueue) onError(err error) {
 func (q *AmqpQueue) setConsumer(deliveryChannel <-chan amqp.Delivery) {
 	go func() {
 		for delivery := range deliveryChannel {
-			channel := q.channel
+			channel := q.getChannel()
 			if channel == nil {
 				return
 			}
 
-			handler := q.msgHandler
+			handler := q.getMsgHandler()
 			if handler != nil {
 				msg := &amqpMessage{
 					channel:  channel,
@@ -235,10 +271,10 @@ func (m *amqpMessage) Nack() error {
 }
 
 func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {
-	ch := make(chan Status, 1)
+	ch := make(chan Status, 2)
 
 	go func() {
-		var queueChannnel chan *amqp.Error
+		var queueChannel chan *amqp.Error
 		for {
 			switch <-ch {
 			case Closed, Closing:
@@ -354,23 +390,26 @@ func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {
 				q.status = Connected
 				q.statusMutex.Unlock()
 
-				queueChannnel = channel.NotifyClose(make(chan *amqp.Error, 1))
+				queueChannel = channel.NotifyClose(make(chan *amqp.Error, 1))
 
-				handler := q.handler
+				handler := q.getHandler()
 				if handler != nil {
 					go handler.OnStatus(q, Connected)
 				}
 				ch <- Connected
 			case Connected:
-				<-queueChannnel
-				var channel *amqp.Channel
+				<-queueChannel
 				q.statusMutex.Lock()
+				if q.status == Closed || q.status == Closing {
+					q.statusMutex.Unlock()
+					return
+				}
 				q.status = Connecting
-				channel = q.channel
+				channel := q.channel
 				q.channel = nil
 				q.statusMutex.Unlock()
 
-				handler := q.handler
+				handler := q.getHandler()
 				if handler != nil {
 					go handler.OnStatus(q, Connecting)
 				}
@@ -380,6 +419,10 @@ func createAmqpQueueEventLoop(q *AmqpQueue) chan Status {
 				ch <- Connecting
 			case Disconnected:
 				q.statusMutex.Lock()
+				if q.status == Closed || q.status == Closing {
+					q.statusMutex.Unlock()
+					return
+				}
 				q.status = Connecting
 				q.statusMutex.Unlock()
 				ch <- Connecting

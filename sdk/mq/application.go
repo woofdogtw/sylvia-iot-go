@@ -65,7 +65,7 @@ type ApplicationMgr struct {
 	dldataResult gmq.GmqQueue
 
 	status      MgrStatus
-	statusMutex sync.Mutex
+	statusMutex sync.RWMutex
 	handler     AppMgrEventHandler
 }
 
@@ -205,6 +205,8 @@ func (mgr *ApplicationMgr) Name() string {
 
 // Manager status.
 func (mgr *ApplicationMgr) Status() MgrStatus {
+	mgr.statusMutex.RLock()
+	defer mgr.statusMutex.RUnlock()
 	return mgr.status
 }
 

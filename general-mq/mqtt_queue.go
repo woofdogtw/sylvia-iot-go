@@ -17,12 +17,16 @@ type MqttQueue struct {
 	conn *MqttConnection
 	// Queue status.
 	status Status
-	// Queue status mutex for changing `status`, `channel` and `evChannel`.
-	statusMutex sync.Mutex
+	// Queue status mutex for changing `status` and `evChannel`.
+	statusMutex sync.RWMutex
 	// The event handler.
 	handler QueueEventHandler
+	// Handler mutex.
+	handlerMutex sync.RWMutex
 	// The message handler.
 	msgHandler QueueMessageHandler
+	// Message handler mutex.
+	msgHandlerMutex sync.RWMutex
 	// The event loop channel.
 	evChannel chan Status
 }
@@ -90,23 +94,29 @@ func (q *MqttQueue) IsRecv() bool {
 }
 
 func (q *MqttQueue) Status() Status {
+	q.statusMutex.RLock()
+	defer q.statusMutex.RUnlock()
 	return q.status
 }
 
 func (q *MqttQueue) SetHandler(handler QueueEventHandler) {
+	q.handlerMutex.Lock()
 	q.handler = handler
+	q.handlerMutex.Unlock()
 }
 
 func (q *MqttQueue) SetMsgHandler(handler QueueMessageHandler) error {
 	if handler == nil {
 		return errors.New("cannot use nil message handler")
 	}
+	q.msgHandlerMutex.Lock()
 	q.msgHandler = handler
+	q.msgHandlerMutex.Unlock()
 	return nil
 }
 
 func (q *MqttQueue) Connect() error {
-	if q.opts.IsRecv && q.msgHandler == nil {
+	if q.opts.IsRecv && q.getMsgHandler() == nil {
 		return fmt.Errorf("%s", NoMsgHandler)
 	}
 
@@ -138,11 +148,9 @@ func (q *MqttQueue) Close() error {
 
 	q.conn.removePacketHandler(q.opts.Name)
 
-	q.statusMutex.Lock()
-	q.status = Closed
-	q.statusMutex.Unlock()
+	q.setStatus(Closed)
 
-	handler := q.handler
+	handler := q.getHandler()
 	if handler != nil {
 		go handler.OnStatus(q, Closed)
 	}
@@ -153,20 +161,45 @@ func (q *MqttQueue) Close() error {
 func (q *MqttQueue) SendMsg(payload []byte) error {
 	if q.opts.IsRecv {
 		return fmt.Errorf("%s", QueueIsReceiver)
-	} else if q.status != Connected {
+	} else if q.Status() != Connected {
 		return fmt.Errorf("%s", NotConnected)
 	}
 
-	token := q.conn.getRawConnection().Publish(q.opts.Name, q.qos(), false, payload)
+	conn := q.conn.getRawConnection()
+	if conn == nil {
+		return fmt.Errorf("%s", NotConnected)
+	}
+	token := conn.Publish(q.opts.Name, q.qos(), false, payload)
 	if !token.WaitTimeout(time.Duration(q.opts.ReconnectMS) * time.Millisecond) {
 		return errors.New("publish queue timeout")
 	}
-	return nil
+	return token.Error()
 }
 
 // To get the associated connection status.
 func (q *MqttQueue) connStatus() Status {
-	return q.conn.status
+	return q.conn.Status()
+}
+
+// Set status with mutex.
+func (q *MqttQueue) setStatus(status Status) {
+	q.statusMutex.Lock()
+	q.status = status
+	q.statusMutex.Unlock()
+}
+
+// Get handler with mutex.
+func (q *MqttQueue) getHandler() QueueEventHandler {
+	q.handlerMutex.RLock()
+	defer q.handlerMutex.RUnlock()
+	return q.handler
+}
+
+// Get message handler with mutex.
+func (q *MqttQueue) getMsgHandler() QueueMessageHandler {
+	q.msgHandlerMutex.RLock()
+	defer q.msgHandlerMutex.RUnlock()
+	return q.msgHandler
 }
 
 // To get the associated topic.
@@ -200,14 +233,14 @@ func (m *mqttMessage) Nack() error {
 }
 
 func (m *mqttQueuePacketHandler) OnPublish(msg mqtt.Message) {
-	handler := m.queue.msgHandler
+	handler := m.queue.getMsgHandler()
 	if handler != nil {
 		go handler.OnMessage(m.queue, &mqttMessage{rawMessage: msg})
 	}
 }
 
 func createMqttQueueEventLoop(q *MqttQueue) chan Status {
-	ch := make(chan Status, 1)
+	ch := make(chan Status, 2)
 
 	go func() {
 		for {
@@ -215,9 +248,7 @@ func createMqttQueueEventLoop(q *MqttQueue) chan Status {
 			case Closed, Closing:
 				return
 			case Connecting:
-				q.statusMutex.Lock()
-				q.status = Connecting
-				q.statusMutex.Unlock()
+				q.setStatus(Connecting)
 
 				if q.connStatus() != Connected {
 					time.Sleep(time.Duration(q.opts.ReconnectMS) * time.Millisecond)
@@ -225,7 +256,7 @@ func createMqttQueueEventLoop(q *MqttQueue) chan Status {
 					continue
 				}
 
-				handler := q.handler
+				handler := q.getHandler()
 				if handler != nil {
 					go handler.OnStatus(q, Connecting)
 				}
@@ -237,19 +268,20 @@ func createMqttQueueEventLoop(q *MqttQueue) chan Status {
 
 				ch <- Connected
 			case Connected:
-				q.statusMutex.Lock()
-				q.status = Connected
-				q.statusMutex.Unlock()
+				q.setStatus(Connected)
 
-				handler := q.handler
+				handler := q.getHandler()
 				if handler != nil {
 					go handler.OnStatus(q, Connected)
 				}
 			case Disconnected:
 				q.statusMutex.Lock()
+				if q.status == Closed || q.status == Closing {
+					q.statusMutex.Unlock()
+					return
+				}
 				q.status = Disconnected
 				q.statusMutex.Unlock()
-
 				ch <- Connecting
 			}
 		}
