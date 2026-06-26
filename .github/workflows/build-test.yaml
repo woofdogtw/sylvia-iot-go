@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       rabbitmq:
-        image: rabbitmq:4.2.5-management-alpine
+        image: rabbitmq:4.3.2-management-alpine
         ports:
           - 5671:5671
           - 5672:5672
           - 15672:15672
       emqx:
-        image: emqx/emqx:6.1.0
+        image: emqx/emqx:6.2.0
         ports:
           - 1883:1883
           - 8883:8883
@@ -47,7 +47,7 @@ jobs:
           sqlite3 test.db < $(pwd)/.github/workflows/files/test.db.sql
           ./sylvia-iot-core -f $(pwd)/.github/workflows/files/config.json5 > /dev/null &
       - name: Run test - general-mq
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         env:
           PROJ: "general-mq"
         with:
@@ -56,7 +56,7 @@ jobs:
           command: >
             go test -tags= -v -cover -covermode=count -coverpkg ./$PROJ -coverprofile ./$PROJ.out ./$PROJ/tests
       - name: Run test - sdk
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         env:
           PROJ: "sdk"
         with:
