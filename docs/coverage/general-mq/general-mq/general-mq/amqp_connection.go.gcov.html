@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-06-26 15:08:11</td>
+            <td class="headerValue">2026-08-07 12:49:39</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -151,11 +151,11 @@
 <span id="L89"><span class="lineNum">      89</span> <span class="tlaGNC">          27 :         }, nil</span></span>
 <span id="L90"><span class="lineNum">      90</span>              : }</span>
 <span id="L91"><span class="lineNum">      91</span>              : </span>
-<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          67 : func (c *AmqpConnection) Status() Status {</span></span>
-<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          67 :         c.statusMutex.RLock()</span></span>
-<span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">          67 :         defer c.statusMutex.RUnlock()</span></span>
-<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          67 :         return c.status</span></span>
-<span id="L96"><span class="lineNum">      96</span> <span class="tlaGNC">          67 : }</span></span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          66 : func (c *AmqpConnection) Status() Status {</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          66 :         c.statusMutex.RLock()</span></span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">          66 :         defer c.statusMutex.RUnlock()</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          66 :         return c.status</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaGNC">          66 : }</span></span>
 <span id="L97"><span class="lineNum">      97</span>              : </span>
 <span id="L98"><span class="lineNum">      98</span> <span class="tlaGNC">           4 : func (c *AmqpConnection) AddHandler(handler ConnectionHandler) string {</span></span>
 <span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">           4 :         id := randomString.Generate(idSize)</span></span>
@@ -215,11 +215,11 @@
 <span id="L153"><span class="lineNum">     153</span>              : }</span>
 <span id="L154"><span class="lineNum">     154</span>              : </span>
 <span id="L155"><span class="lineNum">     155</span>              : // To get the raw AMQP connection instance for channel declaration.</span>
-<span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          30 : func (c *AmqpConnection) getRawConnection() *amqp.Connection {</span></span>
-<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          30 :         c.statusMutex.RLock()</span></span>
-<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          30 :         defer c.statusMutex.RUnlock()</span></span>
-<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          30 :         return c.conn</span></span>
-<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          30 : }</span></span>
+<span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          29 : func (c *AmqpConnection) getRawConnection() *amqp.Connection {</span></span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          29 :         c.statusMutex.RLock()</span></span>
+<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          29 :         defer c.statusMutex.RUnlock()</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          29 :         return c.conn</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          29 : }</span></span>
 <span id="L161"><span class="lineNum">     161</span>              : </span>
 <span id="L162"><span class="lineNum">     162</span>              : // Set status with mutex.</span>
 <span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          21 : func (c *AmqpConnection) setStatus(status Status) {</span></span>
