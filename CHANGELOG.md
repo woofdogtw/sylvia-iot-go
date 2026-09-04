@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.11 - 2026-09-04
+
+### Changed
+
+- Update dependencies and fix vulnerabilities.
+
 ## 0.1.10 - 2026-08-07
 
 ### Changed
