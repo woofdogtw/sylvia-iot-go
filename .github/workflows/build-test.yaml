@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       rabbitmq:
-        image: rabbitmq:4.3.4-management-alpine
+        image: rabbitmq:4.3.5-management-alpine
         ports:
           - 5671:5671
           - 5672:5672
           - 15672:15672
       emqx:
-        image: emqx/emqx:6.2.2
+        image: emqx/emqx:6.3.0
         ports:
           - 1883:1883
           - 8883:8883
