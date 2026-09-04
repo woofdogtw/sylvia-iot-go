@@ -31,13 +31,13 @@
             <td class="headerValue">sdk.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">85.4&nbsp;%</td>
-            <td class="headerCovTableEntry">226</td>
-            <td class="headerCovTableEntry">193</td>
+            <td class="headerCovTableEntryMed">86.6&nbsp;%</td>
+            <td class="headerCovTableEntry">209</td>
+            <td class="headerCovTableEntry">181</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-08-07 12:49:39</td>
+            <td class="headerValue">2026-09-04 12:21:07</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -187,23 +187,23 @@
 <span id="L125"><span class="lineNum">     125</span>              :         SupportSchemes = []string{&quot;amqp&quot;, &quot;amqps&quot;, &quot;mqtt&quot;, &quot;mqtts&quot;}</span>
 <span id="L126"><span class="lineNum">     126</span>              : )</span>
 <span id="L127"><span class="lineNum">     127</span>              : </span>
-<span id="L128"><span class="lineNum">     128</span> <span class="tlaUNC tlaBgUNC">           0 : func (s MgrStatus) String() string {</span></span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaUNC">           0 :         switch s {</span></span>
-<span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :         case NotReady:</span></span>
+<span id="L128"><span class="lineNum">     128</span>              : func (s MgrStatus) String() string {</span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaUNC tlaBgUNC">           0 :         switch s {</span></span>
+<span id="L130"><span class="lineNum">     130</span>              :         case NotReady:</span>
 <span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :                 return &quot;not ready&quot;</span></span>
-<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :         case Ready:</span></span>
+<span id="L132"><span class="lineNum">     132</span>              :         case Ready:</span>
 <span id="L133"><span class="lineNum">     133</span> <span class="tlaUNC">           0 :                 return &quot;ready&quot;</span></span>
 <span id="L134"><span class="lineNum">     134</span>              :         }</span>
 <span id="L135"><span class="lineNum">     135</span> <span class="tlaUNC">           0 :         return &quot;unknown&quot;</span></span>
 <span id="L136"><span class="lineNum">     136</span>              : }</span>
 <span id="L137"><span class="lineNum">     137</span>              : </span>
-<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC tlaBgGNC">          65 : func NewConnectionPool() *ConnectionPool {</span></span>
-<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">          65 :         return &amp;ConnectionPool{</span></span>
+<span id="L138"><span class="lineNum">     138</span>              : func NewConnectionPool() *ConnectionPool {</span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC tlaBgGNC">          65 :         return &amp;ConnectionPool{</span></span>
 <span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">          65 :                 connections: map[string]*counterConnection{},</span></span>
 <span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">          65 :         }</span></span>
-<span id="L142"><span class="lineNum">     142</span> <span class="tlaGNC">          65 : }</span></span>
+<span id="L142"><span class="lineNum">     142</span>              : }</span>
 <span id="L143"><span class="lineNum">     143</span>              : </span>
-<span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">          48 : func (p *ConnectionPool) ForceClear() {</span></span>
+<span id="L144"><span class="lineNum">     144</span>              : func (p *ConnectionPool) ForceClear() {</span>
 <span id="L145"><span class="lineNum">     145</span> <span class="tlaGNC">          48 :         p.mutex.Lock()</span></span>
 <span id="L146"><span class="lineNum">     146</span> <span class="tlaGNC">          48 :         for _, conn := range p.connections {</span></span>
 <span id="L147"><span class="lineNum">     147</span> <span class="tlaUNC tlaBgUNC">           0 :                 c := conn</span></span>
@@ -213,7 +213,7 @@
 <span id="L151"><span class="lineNum">     151</span> <span class="tlaGNC">          48 :         p.mutex.Unlock()</span></span>
 <span id="L152"><span class="lineNum">     152</span>              : }</span>
 <span id="L153"><span class="lineNum">     153</span>              : </span>
-<span id="L154"><span class="lineNum">     154</span> <span class="tlaGNC">          46 : func (c *counterConnection) add(count int) {</span></span>
+<span id="L154"><span class="lineNum">     154</span>              : func (c *counterConnection) add(count int) {</span>
 <span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">          46 :         c.mutex.Lock()</span></span>
 <span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          46 :         c.counter += count</span></span>
 <span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          46 :         c.mutex.Unlock()</span></span>
@@ -221,20 +221,20 @@
 <span id="L159"><span class="lineNum">     159</span>              : </span>
 <span id="L160"><span class="lineNum">     160</span>              : // Utility function to get the message queue connection instance. A new connection will be created</span>
 <span id="L161"><span class="lineNum">     161</span>              : // if the host does not exist.</span>
-<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">          64 : func getConnection(pool *ConnectionPool, hostUri url.URL) (*counterConnection, error) {</span></span>
-<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          66 :         if pool == nil {</span></span>
+<span id="L162"><span class="lineNum">     162</span>              : func getConnection(pool *ConnectionPool, hostUri url.URL) (*counterConnection, error) {</span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          64 :         if pool == nil {</span></span>
 <span id="L164"><span class="lineNum">     164</span> <span class="tlaGNC">           2 :                 return nil, errors.New(&quot;connection pool is nil&quot;)</span></span>
 <span id="L165"><span class="lineNum">     165</span> <span class="tlaGNC">           2 :         }</span></span>
 <span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">          62 :         pool.mutex.Lock()</span></span>
 <span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          62 :         defer pool.mutex.Unlock()</span></span>
 <span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          62 : </span></span>
 <span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          62 :         conn := pool.connections[hostUri.String()]</span></span>
-<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          76 :         if conn != nil {</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          62 :         if conn != nil {</span></span>
 <span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">          14 :                 return conn, nil</span></span>
 <span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">          14 :         }</span></span>
 <span id="L173"><span class="lineNum">     173</span>              : </span>
 <span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">          48 :         switch hostUri.Scheme {</span></span>
-<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          24 :         case &quot;amqp&quot;, &quot;amqps&quot;:</span></span>
+<span id="L175"><span class="lineNum">     175</span>              :         case &quot;amqp&quot;, &quot;amqps&quot;:</span>
 <span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          24 :                 opts := gmq.AmqpConnectionOptions{</span></span>
 <span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">          24 :                         URI: hostUri.String(),</span></span>
 <span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">          24 :                 }</span></span>
@@ -250,7 +250,7 @@
 <span id="L188"><span class="lineNum">     188</span> <span class="tlaGNC">          24 :                 }</span></span>
 <span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">          24 :                 pool.connections[hostUri.String()] = retConn</span></span>
 <span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">          24 :                 return retConn, nil</span></span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">          24 :         case &quot;mqtt&quot;, &quot;mqtts&quot;:</span></span>
+<span id="L191"><span class="lineNum">     191</span>              :         case &quot;mqtt&quot;, &quot;mqtts&quot;:</span>
 <span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">          24 :                 opts := gmq.MqttConnectionOptions{</span></span>
 <span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">          24 :                         URI: hostUri.String(),</span></span>
 <span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">          24 :                 }</span></span>
@@ -266,23 +266,23 @@
 <span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          24 :                 }</span></span>
 <span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          24 :                 pool.connections[hostUri.String()] = retConn</span></span>
 <span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          24 :                 return retConn, nil</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaUNC tlaBgUNC">           0 :         default:</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaUNC">           0 :                 return nil, errors.New(&quot;unsupport scheme&quot; + hostUri.Scheme)</span></span>
+<span id="L207"><span class="lineNum">     207</span>              :         default:</span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaUNC tlaBgUNC">           0 :                 return nil, errors.New(&quot;unsupport scheme&quot; + hostUri.Scheme)</span></span>
 <span id="L209"><span class="lineNum">     209</span>              :         }</span>
 <span id="L210"><span class="lineNum">     210</span>              : }</span>
 <span id="L211"><span class="lineNum">     211</span>              : </span>
 <span id="L212"><span class="lineNum">     212</span>              : // Utility function to remove connection from the pool if the reference count meet zero.</span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC tlaBgGNC">          50 : func removeConnection(pool *ConnectionPool, hostUri string, count int) error {</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          50 :         pool.mutex.Lock()</span></span>
+<span id="L213"><span class="lineNum">     213</span>              : func removeConnection(pool *ConnectionPool, hostUri string, count int) error {</span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC tlaBgGNC">          50 :         pool.mutex.Lock()</span></span>
 <span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">          50 : </span></span>
 <span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">          50 :         conn, ok := pool.connections[hostUri]</span></span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          54 :         if !ok {</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">          50 :         if !ok {</span></span>
 <span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">           4 :                 pool.mutex.Unlock()</span></span>
 <span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           4 :                 return nil</span></span>
 <span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">           4 :         }</span></span>
 <span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">          46 :         conn.mutex.Lock()</span></span>
 <span id="L222"><span class="lineNum">     222</span> <span class="tlaGNC">          46 :         conn.counter -= count</span></span>
-<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">          48 :         if conn.counter &gt; 0 {</span></span>
+<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">          46 :         if conn.counter &gt; 0 {</span></span>
 <span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">           2 :                 conn.mutex.Unlock()</span></span>
 <span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">           2 :                 pool.mutex.Unlock()</span></span>
 <span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">           2 :                 return nil</span></span>
@@ -300,39 +300,39 @@
 <span id="L238"><span class="lineNum">     238</span>              :         opts Options,</span>
 <span id="L239"><span class="lineNum">     239</span>              :         prefix string,</span>
 <span id="L240"><span class="lineNum">     240</span>              :         isNetwork bool,</span>
-<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          62 : ) (*dataQueues, error) {</span></span>
+<span id="L241"><span class="lineNum">     241</span>              : ) (*dataQueues, error) {</span>
 <span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          62 :         var uldata gmq.GmqQueue</span></span>
 <span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">          62 :         var dldata gmq.GmqQueue</span></span>
 <span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          62 :         var dldataResp gmq.GmqQueue</span></span>
 <span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">          62 :         var dldataResult gmq.GmqQueue</span></span>
 <span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          62 :         var ctrl gmq.GmqQueue</span></span>
 <span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          62 : </span></span>
-<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">          68 :         if opts.UnitID == &quot;&quot; {</span></span>
-<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">           8 :                 if opts.UnitCode != &quot;&quot; {</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">          62 :         if opts.UnitID == &quot;&quot; {</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">           6 :                 if opts.UnitCode != &quot;&quot; {</span></span>
 <span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">           2 :                         return nil, errors.New(&quot;UnitID and UnitCode must both empty or non-empty&quot;)</span></span>
 <span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">           2 :                 }</span></span>
-<span id="L252"><span class="lineNum">     252</span> <span class="tlaGNC">          56 :         } else {</span></span>
-<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          60 :                 if opts.UnitCode == &quot;&quot; {</span></span>
+<span id="L252"><span class="lineNum">     252</span>              :         } else {</span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          56 :                 if opts.UnitCode == &quot;&quot; {</span></span>
 <span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">           4 :                         return nil, errors.New(&quot;UnitID and UnitCode must both empty or non-empty&quot;)</span></span>
 <span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">           4 :                 }</span></span>
 <span id="L256"><span class="lineNum">     256</span>              :         }</span>
-<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">          62 :         if opts.ID == &quot;&quot; {</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">          56 :         if opts.ID == &quot;&quot; {</span></span>
 <span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">           6 :                 return nil, errors.New(&quot;`ID` cannot be empty&quot;)</span></span>
 <span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">           6 :         }</span></span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          54 :         if opts.Name == &quot;&quot; {</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          50 :         if opts.Name == &quot;&quot; {</span></span>
 <span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">           4 :                 return nil, errors.New(&quot;`Name` cannot be empty&quot;)</span></span>
 <span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">           4 :         }</span></span>
 <span id="L263"><span class="lineNum">     263</span>              : </span>
 <span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          46 :         unit := opts.UnitCode</span></span>
-<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          48 :         if unit == &quot;&quot; {</span></span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          46 :         if unit == &quot;&quot; {</span></span>
 <span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">           2 :                 unit = &quot;_&quot;</span></span>
 <span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">           2 :         }</span></span>
 <span id="L268"><span class="lineNum">     268</span>              : </span>
 <span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">          46 :         var err error</span></span>
 <span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          46 :         switch conn.connType {</span></span>
-<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          23 :         case connTypeAmqp:</span></span>
+<span id="L271"><span class="lineNum">     271</span>              :         case connTypeAmqp:</span>
 <span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">          23 :                 prefetch := opts.Prefetch</span></span>
-<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          43 :                 if prefetch == 0 {</span></span>
+<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          23 :                 if prefetch == 0 {</span></span>
 <span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          20 :                         prefetch = defPrefetch</span></span>
 <span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          20 :                 }</span></span>
 <span id="L276"><span class="lineNum">     276</span>              : </span>
@@ -385,8 +385,8 @@
 <span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC tlaBgGNC">          23 :                 } else if ctrl, err = gmq.NewAmqpQueue(ctrlOpts, _conn); err != nil {</span></span>
 <span id="L324"><span class="lineNum">     324</span> <span class="tlaUNC tlaBgUNC">           0 :                         return nil, err</span></span>
 <span id="L325"><span class="lineNum">     325</span> <span class="tlaUNC">           0 :                 }</span></span>
-<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC tlaBgGNC">          23 :         case connTypeMqtt:</span></span>
-<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          23 :                 uldataOpts := gmq.MqttQueueOptions{</span></span>
+<span id="L326"><span class="lineNum">     326</span>              :         case connTypeMqtt:</span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC tlaBgGNC">          23 :                 uldataOpts := gmq.MqttQueueOptions{</span></span>
 <span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          23 :                         Name:         fmt.Sprintf(&quot;%s.%s.%s.uldata&quot;, prefix, unit, opts.Name),</span></span>
 <span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">          23 :                         IsRecv:       !isNetwork,</span></span>
 <span id="L330"><span class="lineNum">     330</span> <span class="tlaGNC">          23 :                         Reliable:     true,</span></span>
@@ -431,7 +431,7 @@
 <span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC tlaBgGNC">          23 :                 } else if ctrl, err = gmq.NewMqttQueue(ctrlOpts, _conn); err != nil {</span></span>
 <span id="L370"><span class="lineNum">     370</span> <span class="tlaUNC tlaBgUNC">           0 :                         return nil, err</span></span>
 <span id="L371"><span class="lineNum">     371</span> <span class="tlaUNC">           0 :                 }</span></span>
-<span id="L372"><span class="lineNum">     372</span> <span class="tlaUNC">           0 :         default:</span></span>
+<span id="L372"><span class="lineNum">     372</span>              :         default:</span>
 <span id="L373"><span class="lineNum">     373</span> <span class="tlaUNC">           0 :                 return nil, errors.New(&quot;unknown shared connection type&quot;)</span></span>
 <span id="L374"><span class="lineNum">     374</span>              :         }</span>
 <span id="L375"><span class="lineNum">     375</span>              : </span>

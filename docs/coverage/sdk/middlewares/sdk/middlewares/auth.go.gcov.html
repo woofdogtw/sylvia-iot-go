@@ -31,13 +31,13 @@
             <td class="headerValue">sdk.lcov</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryLo">61.3&nbsp;%</td>
-            <td class="headerCovTableEntry">62</td>
-            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntryLo">60.7&nbsp;%</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntry">37</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-08-07 12:49:39</td>
+            <td class="headerValue">2026-09-04 12:21:07</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -101,11 +101,11 @@
 <span id="L39"><span class="lineNum">      39</span>              : )</span>
 <span id="L40"><span class="lineNum">      40</span>              : </span>
 <span id="L41"><span class="lineNum">      41</span>              : // Generate the Gin authentication middleware.</span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC tlaBgGNC">           4 : func AuthMiddleware(authUri string) func(*gin.Context) {</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          11 :         return func(c *gin.Context) {</span></span>
+<span id="L42"><span class="lineNum">      42</span>              : func AuthMiddleware(authUri string) func(*gin.Context) {</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC tlaBgGNC">           4 :         return func(c *gin.Context) {</span></span>
 <span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           7 :                 token := c.GetHeader(&quot;Authorization&quot;)</span></span>
 <span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           7 :                 token = strings.TrimSpace(token)</span></span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          11 :                 if len(token) &lt; 8 || strings.ToLower(token[:7]) != &quot;bearer &quot; {</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           7 :                 if len(token) &lt; 8 || strings.ToLower(token[:7]) != &quot;bearer &quot; {</span></span>
 <span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           4 :                         c.JSON(http.StatusBadRequest, gin.H{</span></span>
 <span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">           4 :                                 &quot;code&quot;:    constants.ErrParam.String(),</span></span>
 <span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           4 :                                 &quot;message&quot;: &quot;not bearer token&quot;,</span></span>
@@ -124,7 +124,7 @@
 <span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC tlaBgGNC">           3 :                 req.Header.Set(&quot;Authorization&quot;, &quot;Bearer &quot;+token[7:])</span></span>
 <span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           3 :                 client := http.Client{}</span></span>
 <span id="L64"><span class="lineNum">      64</span> <span class="tlaGNC">           3 :                 res, err := client.Do(req)</span></span>
-<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           4 :                 if err != nil {</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           3 :                 if err != nil {</span></span>
 <span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">           1 :                         c.JSON(http.StatusServiceUnavailable, gin.H{</span></span>
 <span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">           1 :                                 &quot;code&quot;:    constants.ErrRsc.String(),</span></span>
 <span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           1 :                                 &quot;message&quot;: err.Error(),</span></span>
@@ -140,7 +140,7 @@
 <span id="L78"><span class="lineNum">      78</span> <span class="tlaUNC">           0 :                         })</span></span>
 <span id="L79"><span class="lineNum">      79</span> <span class="tlaUNC">           0 :                         return</span></span>
 <span id="L80"><span class="lineNum">      80</span> <span class="tlaUNC">           0 :                 }</span></span>
-<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC tlaBgGNC">           3 :                 if res.StatusCode == http.StatusUnauthorized {</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC tlaBgGNC">           2 :                 if res.StatusCode == http.StatusUnauthorized {</span></span>
 <span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC">           1 :                         c.JSON(http.StatusUnauthorized, gin.H{&quot;code&quot;: constants.ErrAuth.String()})</span></span>
 <span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           1 :                         return</span></span>
 <span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           2 :                 } else if res.StatusCode != http.StatusOK {</span></span>
