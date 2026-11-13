@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-10-16 14:17:48</td>
+            <td class="headerValue">2026-11-13 14:46:24</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -226,10 +226,10 @@
 <span id="L164"><span class="lineNum">     164</span>              : }</span>
 <span id="L165"><span class="lineNum">     165</span>              : </span>
 <span id="L166"><span class="lineNum">     166</span>              : func (c *MqttConnection) Status() Status {</span>
-<span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          51 :         c.statusMutex.RLock()</span></span>
-<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          51 :         defer c.statusMutex.RUnlock()</span></span>
-<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          51 :         return c.status</span></span>
-<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          51 : }</span></span>
+<span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          50 :         c.statusMutex.RLock()</span></span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          50 :         defer c.statusMutex.RUnlock()</span></span>
+<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          50 :         return c.status</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          50 : }</span></span>
 <span id="L171"><span class="lineNum">     171</span>              : </span>
 <span id="L172"><span class="lineNum">     172</span>              : func (c *MqttConnection) AddHandler(handler ConnectionHandler) string {</span>
 <span id="L173"><span class="lineNum">     173</span> <span class="tlaGNC">           4 :         id := randomString.Generate(idSize)</span></span>
@@ -289,10 +289,10 @@
 <span id="L227"><span class="lineNum">     227</span>              : </span>
 <span id="L228"><span class="lineNum">     228</span>              : // To get the raw MQTT connection instance for topic operations such as subscribe or publish.</span>
 <span id="L229"><span class="lineNum">     229</span>              : func (c *MqttConnection) getRawConnection() mqtt.Client {</span>
-<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">         100 :         c.statusMutex.RLock()</span></span>
-<span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">         100 :         defer c.statusMutex.RUnlock()</span></span>
-<span id="L232"><span class="lineNum">     232</span> <span class="tlaGNC">         100 :         return c.conn</span></span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">         100 : }</span></span>
+<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">          98 :         c.statusMutex.RLock()</span></span>
+<span id="L231"><span class="lineNum">     231</span> <span class="tlaGNC">          98 :         defer c.statusMutex.RUnlock()</span></span>
+<span id="L232"><span class="lineNum">     232</span> <span class="tlaGNC">          98 :         return c.conn</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          98 : }</span></span>
 <span id="L234"><span class="lineNum">     234</span>              : </span>
 <span id="L235"><span class="lineNum">     235</span>              : // Set status with mutex.</span>
 <span id="L236"><span class="lineNum">     236</span>              : func (c *MqttConnection) setStatus(status Status) {</span>
@@ -314,23 +314,23 @@
 <span id="L252"><span class="lineNum">     252</span>              : // To add a packet handler for `MqttQueue`. The `name` is the queue name.</span>
 <span id="L253"><span class="lineNum">     253</span>              : func (c *MqttConnection) addPacketHandler(name string, topic string, reliable bool,</span>
 <span id="L254"><span class="lineNum">     254</span>              :         handler mqttPacketHandler) {</span>
-<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">          16 :         var qos byte</span></span>
-<span id="L256"><span class="lineNum">     256</span> <span class="tlaGNC">          16 :         if reliable {</span></span>
+<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">          15 :         var qos byte</span></span>
+<span id="L256"><span class="lineNum">     256</span> <span class="tlaGNC">          15 :         if reliable {</span></span>
 <span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :                 qos = 1</span></span>
 <span id="L258"><span class="lineNum">     258</span> <span class="tlaUNC">           0 :         }</span></span>
-<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">          16 :         c.packetHandlersMutex.Lock()</span></span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          16 :         c.packetHandlers[name] = mqttPacketHandlerItem{</span></span>
-<span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">          16 :                 handler: handler,</span></span>
-<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          16 :                 topic:   topic,</span></span>
-<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">          16 :                 qos:     qos,</span></span>
-<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          16 :         }</span></span>
-<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          16 :         c.packetHandlersMutex.Unlock()</span></span>
-<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">          16 : </span></span>
-<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">          16 :         conn := c.getRawConnection()</span></span>
-<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">          16 :         if conn != nil {</span></span>
-<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">          16 :                 token := conn.Subscribe(topic, qos, c.mqttMessageHandler)</span></span>
-<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          16 :                 _ = token.WaitTimeout(c.opts.reconnect)</span></span>
-<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          16 :         }</span></span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">          15 :         c.packetHandlersMutex.Lock()</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          15 :         c.packetHandlers[name] = mqttPacketHandlerItem{</span></span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">          15 :                 handler: handler,</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          15 :                 topic:   topic,</span></span>
+<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">          15 :                 qos:     qos,</span></span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          15 :         }</span></span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          15 :         c.packetHandlersMutex.Unlock()</span></span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">          15 : </span></span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">          15 :         conn := c.getRawConnection()</span></span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">          15 :         if conn != nil {</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">          15 :                 token := conn.Subscribe(topic, qos, c.mqttMessageHandler)</span></span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          15 :                 _ = token.WaitTimeout(c.opts.reconnect)</span></span>
+<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          15 :         }</span></span>
 <span id="L272"><span class="lineNum">     272</span>              : }</span>
 <span id="L273"><span class="lineNum">     273</span>              : </span>
 <span id="L274"><span class="lineNum">     274</span>              : // To remove a packet handler. The `name` is the queue name.</span>
@@ -341,11 +341,11 @@
 <span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">          22 :         c.packetHandlersMutex.Unlock()</span></span>
 <span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          22 : </span></span>
 <span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          22 :         if item.handler != nil {</span></span>
-<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">          16 :                 conn := c.getRawConnection()</span></span>
-<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">          16 :                 if conn != nil {</span></span>
-<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">          16 :                         token := conn.Unsubscribe(item.topic)</span></span>
-<span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">          16 :                         _ = token.WaitTimeout(c.opts.reconnect)</span></span>
-<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          16 :                 }</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">          15 :                 conn := c.getRawConnection()</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">          15 :                 if conn != nil {</span></span>
+<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">          15 :                         token := conn.Unsubscribe(item.topic)</span></span>
+<span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">          15 :                         _ = token.WaitTimeout(c.opts.reconnect)</span></span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          15 :                 }</span></span>
 <span id="L287"><span class="lineNum">     287</span>              :         }</span>
 <span id="L288"><span class="lineNum">     288</span>              : }</span>
 <span id="L289"><span class="lineNum">     289</span>              : </span>
@@ -369,22 +369,22 @@
 <span id="L307"><span class="lineNum">     307</span> <span class="tlaUNC">           0 :                                         continue</span></span>
 <span id="L308"><span class="lineNum">     308</span>              :                                 }</span>
 <span id="L309"><span class="lineNum">     309</span>              : </span>
-<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">          26 :                                 opts := mqtt.NewClientOptions().</span></span>
-<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          26 :                                         AddBroker(fmt.Sprintf(&quot;%s://%s:%d&quot;,</span></span>
-<span id="L312"><span class="lineNum">     312</span> <span class="tlaGNC">          26 :                                                 c.opts.uri.scheme, c.opts.uri.host, c.opts.uri.port)).</span></span>
-<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">          26 :                                         SetCleanSession(c.opts.cleanSession).</span></span>
-<span id="L314"><span class="lineNum">     314</span> <span class="tlaGNC">          26 :                                         SetClientID(c.opts.clientID).</span></span>
-<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">          26 :                                         SetConnectionLostHandler(genMqttDisconnectedHandler(c)).</span></span>
-<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC">          26 :                                         SetConnectRetryInterval(c.opts.reconnect).</span></span>
-<span id="L317"><span class="lineNum">     317</span> <span class="tlaGNC">          26 :                                         SetConnectTimeout(c.opts.connectTimeout).</span></span>
-<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          26 :                                         SetOnConnectHandler(genMqttConnectedHandler(c)).</span></span>
-<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          26 :                                         SetPassword(c.opts.uri.password).</span></span>
-<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC">          26 :                                         SetUsername(c.opts.uri.username)</span></span>
-<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">          26 :                                 conn := mqtt.NewClient(opts)</span></span>
-<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">          26 :                                 c.statusMutex.Lock()</span></span>
-<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">          26 :                                 c.conn = conn</span></span>
-<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          26 :                                 c.statusMutex.Unlock()</span></span>
-<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">          26 :                                 conn.Connect()</span></span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">          27 :                                 opts := mqtt.NewClientOptions().</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          27 :                                         AddBroker(fmt.Sprintf(&quot;%s://%s:%d&quot;,</span></span>
+<span id="L312"><span class="lineNum">     312</span> <span class="tlaGNC">          27 :                                                 c.opts.uri.scheme, c.opts.uri.host, c.opts.uri.port)).</span></span>
+<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">          27 :                                         SetCleanSession(c.opts.cleanSession).</span></span>
+<span id="L314"><span class="lineNum">     314</span> <span class="tlaGNC">          27 :                                         SetClientID(c.opts.clientID).</span></span>
+<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">          27 :                                         SetConnectionLostHandler(genMqttDisconnectedHandler(c)).</span></span>
+<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC">          27 :                                         SetConnectRetryInterval(c.opts.reconnect).</span></span>
+<span id="L317"><span class="lineNum">     317</span> <span class="tlaGNC">          27 :                                         SetConnectTimeout(c.opts.connectTimeout).</span></span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          27 :                                         SetOnConnectHandler(genMqttConnectedHandler(c)).</span></span>
+<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          27 :                                         SetPassword(c.opts.uri.password).</span></span>
+<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC">          27 :                                         SetUsername(c.opts.uri.username)</span></span>
+<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">          27 :                                 conn := mqtt.NewClient(opts)</span></span>
+<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">          27 :                                 c.statusMutex.Lock()</span></span>
+<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">          27 :                                 c.conn = conn</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          27 :                                 c.statusMutex.Unlock()</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">          27 :                                 conn.Connect()</span></span>
 <span id="L326"><span class="lineNum">     326</span>              :                         case Connected:</span>
 <span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          26 :                                 c.setStatus(Connected)</span></span>
 <span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          26 : </span></span>
@@ -459,15 +459,15 @@
 <span id="L397"><span class="lineNum">     397</span> <span class="tlaGNC">          27 :                 c.packetHandlersMutex.RUnlock()</span></span>
 <span id="L398"><span class="lineNum">     398</span> <span class="tlaGNC">          27 :                 conn := c.getRawConnection()</span></span>
 <span id="L399"><span class="lineNum">     399</span> <span class="tlaGNC">          27 :                 if conn != nil {</span></span>
-<span id="L400"><span class="lineNum">     400</span> <span class="tlaGNC">          26 :                         conn.SubscribeMultiple(topics, c.mqttMessageHandler)</span></span>
-<span id="L401"><span class="lineNum">     401</span> <span class="tlaGNC">          26 :                 }</span></span>
+<span id="L400"><span class="lineNum">     400</span> <span class="tlaGNC">          27 :                         conn.SubscribeMultiple(topics, c.mqttMessageHandler)</span></span>
+<span id="L401"><span class="lineNum">     401</span> <span class="tlaGNC">          27 :                 }</span></span>
 <span id="L402"><span class="lineNum">     402</span>              : </span>
-<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC">          26 :                 c.evChannel &lt;- Connected</span></span>
+<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC">          27 :                 c.evChannel &lt;- Connected</span></span>
 <span id="L404"><span class="lineNum">     404</span>              :         }</span>
 <span id="L405"><span class="lineNum">     405</span>              : }</span>
 <span id="L406"><span class="lineNum">     406</span>              : </span>
 <span id="L407"><span class="lineNum">     407</span>              : func genMqttDisconnectedHandler(c *MqttConnection) mqtt.ConnectionLostHandler {</span>
-<span id="L408"><span class="lineNum">     408</span> <span class="tlaGNC">          26 :         return func(_c mqtt.Client, err error) {</span></span>
+<span id="L408"><span class="lineNum">     408</span> <span class="tlaGNC">          27 :         return func(_c mqtt.Client, err error) {</span></span>
 <span id="L409"><span class="lineNum">     409</span> <span class="tlaUNC">           0 :                 c.setStatus(Connecting)</span></span>
 <span id="L410"><span class="lineNum">     410</span> <span class="tlaUNC">           0 : </span></span>
 <span id="L411"><span class="lineNum">     411</span> <span class="tlaUNC">           0 :                 for id, handler := range c.cloneHandlers() {</span></span>
@@ -481,14 +481,14 @@
 <span id="L419"><span class="lineNum">     419</span> <span class="tlaGNC">          33 :         return func(_c mqtt.Client, msg mqtt.Message) {</span></span>
 <span id="L420"><span class="lineNum">     420</span> <span class="tlaGNC">          17 :                 topic := msg.Topic()</span></span>
 <span id="L421"><span class="lineNum">     421</span> <span class="tlaGNC">          17 : </span></span>
-<span id="L422"><span class="lineNum">     422</span> <span class="tlaGNC">          17 :                 var item mqttPacketHandlerItem</span></span>
-<span id="L423"><span class="lineNum">     423</span> <span class="tlaGNC">          17 :                 c.packetHandlersMutex.RLock()</span></span>
-<span id="L424"><span class="lineNum">     424</span> <span class="tlaGNC">          17 :                 item = c.packetHandlers[topic]</span></span>
-<span id="L425"><span class="lineNum">     425</span> <span class="tlaGNC">          17 :                 c.packetHandlersMutex.RUnlock()</span></span>
-<span id="L426"><span class="lineNum">     426</span> <span class="tlaGNC">          17 : </span></span>
-<span id="L427"><span class="lineNum">     427</span> <span class="tlaGNC">          17 :                 if item.handler != nil {</span></span>
-<span id="L428"><span class="lineNum">     428</span> <span class="tlaGNC">          17 :                         go item.handler.OnPublish(msg)</span></span>
-<span id="L429"><span class="lineNum">     429</span> <span class="tlaGNC">          17 :                 }</span></span>
+<span id="L422"><span class="lineNum">     422</span> <span class="tlaGNC">          16 :                 var item mqttPacketHandlerItem</span></span>
+<span id="L423"><span class="lineNum">     423</span> <span class="tlaGNC">          16 :                 c.packetHandlersMutex.RLock()</span></span>
+<span id="L424"><span class="lineNum">     424</span> <span class="tlaGNC">          16 :                 item = c.packetHandlers[topic]</span></span>
+<span id="L425"><span class="lineNum">     425</span> <span class="tlaGNC">          16 :                 c.packetHandlersMutex.RUnlock()</span></span>
+<span id="L426"><span class="lineNum">     426</span> <span class="tlaGNC">          16 : </span></span>
+<span id="L427"><span class="lineNum">     427</span> <span class="tlaGNC">          15 :                 if item.handler != nil {</span></span>
+<span id="L428"><span class="lineNum">     428</span> <span class="tlaGNC">          16 :                         go item.handler.OnPublish(msg)</span></span>
+<span id="L429"><span class="lineNum">     429</span> <span class="tlaGNC">          16 :                 }</span></span>
 <span id="L430"><span class="lineNum">     430</span>              :         }</span>
 <span id="L431"><span class="lineNum">     431</span>              : }</span>
         </pre>

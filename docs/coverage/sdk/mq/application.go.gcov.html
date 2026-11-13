@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-10-16 14:17:49</td>
+            <td class="headerValue">2026-11-13 14:46:24</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
@@ -267,10 +267,10 @@
 <span id="L205"><span class="lineNum">     205</span>              : </span>
 <span id="L206"><span class="lineNum">     206</span>              : // Manager status.</span>
 <span id="L207"><span class="lineNum">     207</span>              : func (mgr *ApplicationMgr) Status() MgrStatus {</span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1588 :         mgr.statusMutex.RLock()</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1588 :         defer mgr.statusMutex.RUnlock()</span></span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        1588 :         return mgr.status</span></span>
-<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">        1588 : }</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">        1594 :         mgr.statusMutex.RLock()</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        1594 :         defer mgr.statusMutex.RUnlock()</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        1594 :         return mgr.status</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">        1594 : }</span></span>
 <span id="L212"><span class="lineNum">     212</span>              : </span>
 <span id="L213"><span class="lineNum">     213</span>              : // Detail status of each message queue. Please ignore `Ctrl`.</span>
 <span id="L214"><span class="lineNum">     214</span>              : func (mgr *ApplicationMgr) MqStatus() DataMqStatus {</span>
@@ -414,16 +414,16 @@
 <span id="L352"><span class="lineNum">     352</span>              : }</span>
 <span id="L353"><span class="lineNum">     353</span>              : </span>
 <span id="L354"><span class="lineNum">     354</span>              : func (h *appMgrMqEventHandler) onEvent(_ gmq.GmqQueue) {</span>
-<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         196 :         h.mgr.statusMutex.Lock()</span></span>
-<span id="L356"><span class="lineNum">     356</span> <span class="tlaGNC">         196 :         var mgrStatus MgrStatus</span></span>
-<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         196 :         if h.mgr.uldata.Status() == gmq.Connected &amp;&amp;</span></span>
-<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">         196 :                 h.mgr.dldata.Status() == gmq.Connected &amp;&amp;</span></span>
-<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">         196 :                 h.mgr.dldataResp.Status() == gmq.Connected &amp;&amp;</span></span>
-<span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC">         196 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          19 :                 mgrStatus = Ready</span></span>
-<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">          19 :         } else {</span></span>
-<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">         177 :                 mgrStatus = NotReady</span></span>
-<span id="L364"><span class="lineNum">     364</span> <span class="tlaGNC">         177 :         }</span></span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         195 :         h.mgr.statusMutex.Lock()</span></span>
+<span id="L356"><span class="lineNum">     356</span> <span class="tlaGNC">         195 :         var mgrStatus MgrStatus</span></span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         195 :         if h.mgr.uldata.Status() == gmq.Connected &amp;&amp;</span></span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">         195 :                 h.mgr.dldata.Status() == gmq.Connected &amp;&amp;</span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">         195 :                 h.mgr.dldataResp.Status() == gmq.Connected &amp;&amp;</span></span>
+<span id="L360"><span class="lineNum">     360</span> <span class="tlaGNC">         195 :                 h.mgr.dldataResult.Status() == gmq.Connected {</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          18 :                 mgrStatus = Ready</span></span>
+<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">          18 :         } else {</span></span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">         178 :                 mgrStatus = NotReady</span></span>
+<span id="L364"><span class="lineNum">     364</span> <span class="tlaGNC">         178 :         }</span></span>
 <span id="L365"><span class="lineNum">     365</span>              : </span>
 <span id="L366"><span class="lineNum">     366</span> <span class="tlaGNC">         196 :         changed := false</span></span>
 <span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">         196 :         if h.mgr.status != mgrStatus {</span></span>
