@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.1.12 - 2026-10-15
+## 0.1.13 - 2026-11-13
+
+### Changed
+
+- Update dependencies and fix vulnerabilities.
+
+## 0.1.12 - 2026-10-16
 
 ### Changed
 
